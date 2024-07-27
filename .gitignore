@@ -1,5 +1,20 @@
+# Gradle
+/.gradle/
+!gradle-wrapper.jar
+/build/
 
-# IDE - VSCode
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# Visual Studio Code
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -7,18 +22,14 @@
 !.vscode/extensions.json
 .history/*
 
-# Gradle
-/.gradle/
-!gradle-wrapper.jar
-/build/
-
-# Front - Build Tool Generated
+# Miscellaneous
 /.angular/cache
-/*.log
-/node_modules/
-
-# Front - Compiled Output
-frontend/dist
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
 
 # Other
 version
