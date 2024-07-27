@@ -1,0 +1,28 @@
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Gradle
+/.gradle/
+!gradle-wrapper.jar
+/build/
+
+# Front - Build Tool Generated
+/.angular/cache
+/*.log
+/node_modules/
+
+# Front - Compiled Output
+frontend/dist
+
+# Other
+version
+.nyx-summary
+.version
+.nyx-changelog/
+.tags
