@@ -1,0 +1,10 @@
+.angular
+.vscode
+build
+coverage
+e2e
+node_modules
+dist
+package.json
+package-lock.json
+polyfills.ts
