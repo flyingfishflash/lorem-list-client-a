@@ -37,3 +37,6 @@ version
 .version
 .nyx-changelog/
 .tags
+
+# Application
+src/environments/environment.development.ts
