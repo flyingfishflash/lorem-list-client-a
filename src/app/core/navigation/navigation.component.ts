@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { Component, inject } from '@angular/core'
+import { RouterLink } from '@angular/router'
+import { OidcSecurityService } from 'angular-auth-oidc-client'
 
 @Component({
   selector: 'app-navigation',
@@ -10,20 +10,18 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   styleUrl: './navigation.component.scss',
 })
 export class NavigationComponent {
-  private readonly oidcSecurityService = inject(OidcSecurityService);
-  protected readonly authenticated = this.oidcSecurityService.authenticated;
+  private readonly oidcSecurityService = inject(OidcSecurityService)
+  protected readonly authenticated = this.oidcSecurityService.authenticated
 
   login(): void {
-    this.oidcSecurityService.authorize();
+    this.oidcSecurityService.authorize()
   }
 
   refreshSession(): void {
-    this.oidcSecurityService.authorize();
+    this.oidcSecurityService.authorize()
   }
 
   logout(): void {
-    this.oidcSecurityService
-      .logoff()
-      .subscribe((result) => console.log(result));
+    this.oidcSecurityService.logoff().subscribe((result) => console.log(result))
   }
 }

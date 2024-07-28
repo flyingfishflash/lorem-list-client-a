@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    env: any;
+    env: any
   }
 }
 
@@ -26,4 +26,4 @@ export const environment = {
     // name of claim object containing the user name
     usernameClaim: window['env']['oidcUsernameClaim'] || '',
   },
-};
+}

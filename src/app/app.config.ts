@@ -1,12 +1,12 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http'
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core'
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
-} from '@angular/router';
-import { routes } from './app.routes';
-import { authInterceptor, provideAuth } from 'angular-auth-oidc-client';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authConfig } from './core/authentication/auth.config';
+} from '@angular/router'
+import { authInterceptor, provideAuth } from 'angular-auth-oidc-client'
+import { routes } from './app.routes'
+import { authConfig } from './core/authentication/auth.config'
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,4 +15,4 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withEnabledBlockingInitialNavigation()),
     provideZoneChangeDetection({ eventCoalescing: true }),
   ],
-};
+}

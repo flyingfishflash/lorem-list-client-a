@@ -1,0 +1,16 @@
+{
+  "bracketSameLine": true,
+  "quoteProps": "consistent",
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ],
+  "plugins": ["prettier-plugin-organize-imports"]
+}

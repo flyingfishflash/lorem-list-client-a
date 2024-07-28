@@ -1,7 +1,7 @@
-import { Routes } from '@angular/router';
-import { HomeComponent } from './core/home/home.component';
-import { ProtectedComponent } from './core/protected/protected.component';
-import { autoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
+import { Routes } from '@angular/router'
+import { autoLoginPartialRoutesGuard } from 'angular-auth-oidc-client'
+import { HomeComponent } from './core/home/home.component'
+import { ProtectedComponent } from './core/protected/protected.component'
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -12,4 +12,4 @@ export const routes: Routes = [
     component: ProtectedComponent,
     canActivate: [autoLoginPartialRoutesGuard],
   },
-];
+]
