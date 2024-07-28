@@ -7,7 +7,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './navigation.component.html',
-  styleUrl: './navigation.component.scss'
+  styleUrl: './navigation.component.scss',
 })
 export class NavigationComponent {
   private readonly oidcSecurityService = inject(OidcSecurityService);

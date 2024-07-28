@@ -1,24 +1,22 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { /*Router,*/ RouterOutlet } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { NavigationComponent } from './core/navigation/navigation.component';
-
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NavigationComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
-export class AppComponent  implements OnInit {
-
-title = "Lorem List"
+export class AppComponent implements OnInit {
+  title = 'Lorem List';
 
   private readonly oidcSecurityService = inject(OidcSecurityService);
 
   ngOnInit(): void {
-    console.log("app component ngoninit")
+    console.log('app component ngoninit');
     this.oidcSecurityService
       .checkAuth()
       .subscribe(({ isAuthenticated, accessToken }) => {
@@ -43,5 +41,4 @@ title = "Lorem List"
       .logoff()
       .subscribe((result) => console.log(result));
   }
-
 }

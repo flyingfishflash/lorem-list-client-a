@@ -8,9 +8,8 @@ describe('ProtectedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProtectedComponent]
-    })
-    .compileComponents();
+      imports: [ProtectedComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProtectedComponent);
     component = fixture.componentInstance;

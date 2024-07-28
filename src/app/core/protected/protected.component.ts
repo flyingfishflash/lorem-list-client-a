@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './protected.component.html',
-  styleUrl: './protected.component.scss'
+  styleUrl: './protected.component.scss',
 })
-export class ProtectedComponent {
-
-}
+export class ProtectedComponent {}

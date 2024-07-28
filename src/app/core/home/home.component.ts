@@ -7,7 +7,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   standalone: true,
   imports: [JsonPipe],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   private readonly oidcSecurityService = inject(OidcSecurityService);
