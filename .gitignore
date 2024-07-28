@@ -39,4 +39,4 @@ version
 .tags
 
 # Application
-environments.development.ts
+environment.development.ts
