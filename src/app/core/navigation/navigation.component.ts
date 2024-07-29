@@ -22,6 +22,8 @@ export class NavigationComponent {
   }
 
   logout(): void {
-    this.oidcSecurityService.logoff().subscribe((result) => console.log(result))
+    this.oidcSecurityService.logoff().subscribe((result) => {
+      console.log(result)
+    })
   }
 }

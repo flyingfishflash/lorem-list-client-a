@@ -16,7 +16,6 @@ const baseConfig = tseslint.config(
       eslint.configs.recommended,
       // when ts strictNullChecks has been enabled, change this to strict-type-checked
       ...tseslint.configs.strict,
-      ...tseslint.configs.stylistic,
       ...angular.configs.tsRecommended,
       ...tseslint.configs.recommended
     ],
