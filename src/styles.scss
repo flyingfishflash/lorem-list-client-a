@@ -1,1 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+@import "./css/base.css";
+@import "./css/grids.css";
+@import "./css/grids-responsive.css";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+tr.mat-mdc-footer-row {
+  border: 1px solid #e7e7e7;
+  font-weight: bold;
+  height: 10px !important;
+}

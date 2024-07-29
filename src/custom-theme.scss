@@ -1,0 +1,38 @@
+// https://material.angular.io/guide/theming
+@use "@angular/material" as mat;
+
+/* SCSS HEX */
+// https://coolors.co/474448-2d232e-e0ddcf-534b52-f1f0ea
+// http://mcg.mbitson.com/#
+$onyx: #474448ff;
+$raisin-black: #2d232eff;
+$bone: #e0ddcfff;
+$wenge: #534b52ff;
+$isabelline: #f1f0eaff;
+
+@include mat.core();
+
+// https://material.io/design/color/
+$lorem-list-ui-primary: mat.define-palette(mat.$blue-palette);
+$lorem-list-ui-accent: mat.define-palette(mat.$brown-palette, 600);
+$lorem-list-ui-warn: mat.define-palette(mat.$orange-palette);
+
+$lorem-list-ui-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $lorem-list-ui-primary,
+      accent: $lorem-list-ui-accent,
+      warn: $lorem-list-ui-warn,
+    ),
+    typography: mat.define-typography-config(),
+    density: 0,
+  )
+);
+
+@include mat.all-component-themes($lorem-list-ui-theme);
+// @include login.theme($lorem-list-ui-theme);
+
+// intended to style a mat-icon used as a form field suffix
+.password-visibility-indicator {
+  color: mat.get-color-from-palette($lorem-list-ui-primary, 500);
+}
