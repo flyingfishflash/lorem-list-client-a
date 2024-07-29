@@ -1,5 +1,6 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http'
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -14,5 +15,6 @@ export const appConfig: ApplicationConfig = {
     provideAuth(authConfig),
     provideRouter(routes, withEnabledBlockingInitialNavigation()),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideNoopAnimations(),
   ],
 }
