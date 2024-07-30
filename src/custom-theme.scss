@@ -13,18 +13,18 @@ $isabelline: #f1f0eaff;
 @include mat.core();
 
 // https://material.io/design/color/
-$lorem-list-ui-primary: mat.define-palette(mat.$blue-palette);
-$lorem-list-ui-accent: mat.define-palette(mat.$brown-palette, 600);
-$lorem-list-ui-warn: mat.define-palette(mat.$orange-palette);
+$lorem-list-ui-primary: mat.m2-define-palette(mat.$m2-blue-palette);
+$lorem-list-ui-accent: mat.m2-define-palette(mat.$m2-brown-palette, 600);
+$lorem-list-ui-warn: mat.m2-define-palette(mat.$m2-orange-palette);
 
-$lorem-list-ui-theme: mat.define-light-theme(
+$lorem-list-ui-theme: mat.m2-define-light-theme(
   (
     color: (
       primary: $lorem-list-ui-primary,
       accent: $lorem-list-ui-accent,
       warn: $lorem-list-ui-warn,
     ),
-    typography: mat.define-typography-config(),
+    typography: mat.m2-define-typography-config(),
     density: 0,
   )
 );
@@ -34,5 +34,5 @@ $lorem-list-ui-theme: mat.define-light-theme(
 
 // intended to style a mat-icon used as a form field suffix
 .password-visibility-indicator {
-  color: mat.get-color-from-palette($lorem-list-ui-primary, 500);
+  color: mat.m2-get-color-from-palette($lorem-list-ui-primary, 500);
 }

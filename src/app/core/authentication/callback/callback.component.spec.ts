@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { NavigationComponent } from './navigation.component'
+import { CallbackComponent } from './callback.component'
 
-describe('NavigationComponent', () => {
-  let component: NavigationComponent
-  let fixture: ComponentFixture<NavigationComponent>
+describe('CallbackComponent', () => {
+  let component: CallbackComponent
+  let fixture: ComponentFixture<CallbackComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavigationComponent],
+      imports: [CallbackComponent],
     }).compileComponents()
 
-    fixture = TestBed.createComponent(NavigationComponent)
+    fixture = TestBed.createComponent(CallbackComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })
