@@ -1,5 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core'
-import { Router } from '@angular/router'
+import { Component, OnInit } from '@angular/core'
 
 @Component({
   selector: 'app-callback',
@@ -9,10 +8,7 @@ import { Router } from '@angular/router'
   styleUrl: './callback.component.scss',
 })
 export class CallbackComponent implements OnInit {
-  private readonly router = inject(Router)
-
   ngOnInit(): void {
     console.log('callback component: init')
-    this.router.navigateByUrl('/home')
   }
 }

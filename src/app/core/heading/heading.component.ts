@@ -1,5 +1,5 @@
 import { AsyncPipe, NgIf } from '@angular/common'
-import { Component, inject, OnInit } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
@@ -22,12 +22,10 @@ import { OidcSecurityService } from 'angular-auth-oidc-client'
     AsyncPipe,
   ],
 })
-export class HeadingComponent implements OnInit {
-  private readonly oidcSecurityService = inject(OidcSecurityService)
+export class HeadingComponent {
   private readonly router = inject(Router)
-  oidcUser = this.oidcSecurityService.userData
-
-  ngOnInit(): void {}
+  private readonly oidcSecurityService = inject(OidcSecurityService)
+  protected oidcUser = this.oidcSecurityService.userData
 
   // get isAdmin() {
   //   return (
@@ -55,8 +53,4 @@ export class HeadingComponent implements OnInit {
     this.router.navigateByUrl('')
     location.reload()
   }
-
-  // logoutBasicAuth() {
-  //   this.basicAuthService.signOut('parameter')
-  // }
 }

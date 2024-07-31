@@ -8,7 +8,7 @@ export const authConfig: PassedInitialConfig = {
     forbiddenRoute: '/forbidden',
     historyCleanupOff: true,
     // logLevel: LogLevel.Debug,
-    // postLoginRoute: '/home',
+    postLoginRoute: '/home',
     postLogoutRedirectUri: window.location.origin + '/login',
     redirectUrl: window.location.origin + '/auth/callback',
     renewTimeBeforeTokenExpiresInSeconds: 30,
