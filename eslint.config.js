@@ -78,13 +78,6 @@ const baseConfig = tseslint.config(
           format: ['PascalCase'],
           prefix: ['is', 'should', 'has', 'can', 'did', 'will'],
         },
-        // TODO: parameter selector can be removed when account tree is removed.
-        {
-          selector: 'parameter',
-          format: ['strictCamelCase'],
-          leadingUnderscore: 'allow',
-          trailingUnderscore: 'forbid',
-        },
         {
           selector: 'property',
           format: ['strictCamelCase'],
