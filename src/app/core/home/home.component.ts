@@ -1,4 +1,4 @@
-import { JsonPipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -8,7 +8,7 @@ import { AppConfigRuntime } from '../../app-config-runtime';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [JsonPipe, MatCardModule],
+  imports: [DatePipe, JsonPipe, MatCardModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
