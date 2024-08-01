@@ -76,7 +76,8 @@
           [routerLink]="'/logout'"
           routerLinkActive
           [routerLinkActiveOptions]="{ exact: true }"
-          mat-list-item (click)="logoutOidc()">
+          mat-list-item
+          (click)="logoutOidc()">
           <span class="entry">
             <mat-icon>logout</mat-icon>
             <span *ngIf="!isCollapsed">Logout</span>
