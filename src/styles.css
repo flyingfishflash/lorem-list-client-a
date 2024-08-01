@@ -1,6 +1,6 @@
-@import "./css/base.css";
-@import "./css/grids.css";
-@import "./css/grids-responsive.css";
+@import './css/base.css';
+@import './css/grids.css';
+@import './css/grids-responsive.css';
 
 html,
 body {
@@ -8,7 +8,7 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 tr.mat-mdc-footer-row {
@@ -17,5 +17,11 @@ tr.mat-mdc-footer-row {
   height: 10px !important;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}

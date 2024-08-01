@@ -21,13 +21,12 @@ export const isAuthenticatedGuard = () => {
 }
 
 export const routes: Routes = [
-  // { path: '', pathMatch: 'full', redirectTo: 'home' },
+  { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'auth/callback', component: CallbackComponent },
   {
     path: 'home',
     loadComponent: () =>
       import('./core/home/home.component').then((m) => m.HomeComponent),
-    canActivate: [isAuthenticatedGuard],
   },
   {
     path: 'lists',

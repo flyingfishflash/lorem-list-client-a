@@ -1,35 +1,35 @@
 /* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
-	"angularCompilerOptions": {
-		"enableI18nLegacyMessageIdFormat": false,
-		"strictInjectionParameters": true,
-		"strictInputAccessModifiers": true,
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
     "strictMetadataEmit": true,
-		"strictTemplates": true,
-	},
-	"compileOnSave": false,
-	"compilerOptions": {
-		"declaration": false,
+    "strictTemplates": true
+  },
+  "compileOnSave": false,
+  "compilerOptions": {
+    "declaration": false,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
-		"esModuleInterop": true,
-		"experimentalDecorators": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-		"importHelpers": true,
-		"lib": ["ES2023",	"dom"],
-		"module": "ES2022",
-		"moduleResolution": "node",
-		"noFallthroughCasesInSwitch": true,
-		"noImplicitOverride": true,
-		"noImplicitReturns": true,
-		"noPropertyAccessFromIndexSignature": true,
+    "importHelpers": true,
+    "lib": ["ES2023", "dom"],
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-		"outDir": "./dist/out-tsc",
-		"skipLibCheck": true,
-		"strict": true,
+    "outDir": "./dist/out-tsc",
+    "skipLibCheck": true,
+    "strict": true,
     // ---
     "alwaysStrict": true,
     "noImplicitAny": true,
@@ -38,11 +38,11 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     // For awareness on exactOptionalPropertyTypes: https://github.com/angular/components/issues/24078
-    "exactOptionalPropertyTypes" : true, 
+    "exactOptionalPropertyTypes": true,
     "strictPropertyInitialization": true,
     "useUnknownInCatchVariables": true,
     // --
     "sourceMap": true,
-		"target": "ES2023"
-	}
+    "target": "ES2023"
+  }
 }

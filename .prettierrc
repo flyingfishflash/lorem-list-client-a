@@ -3,7 +3,6 @@
   "quoteProps": "consistent",
   "semi": false,
   "singleQuote": true,
-  "trailingComma": "all",
   "overrides": [
     {
       "files": "*.html",
