@@ -1,13 +1,13 @@
-import { DatePipe, NgIf } from '@angular/common'
-import { Component, inject } from '@angular/core'
-import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatGridListModule } from '@angular/material/grid-list'
-import { MatIconModule } from '@angular/material/icon'
-import { MatTabsModule } from '@angular/material/tabs'
-import { OidcSecurityService } from 'angular-auth-oidc-client'
-import { environment } from '../../../environments/environment'
-import { BuildProperties } from '../../app-build-properties'
+import { DatePipe, NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { environment } from '../../../environments/environment';
+import { BuildProperties } from '../../app-build-properties';
 
 @Component({
   selector: 'app-login',
@@ -34,22 +34,22 @@ export class LoginComponent {
     name: 'default',
     time: 'default',
     version: 'default',
-  }
+  };
 
-  errorMessage = ''
-  oidcName = ''
-  private oidcSecurityService = inject(OidcSecurityService)
+  errorMessage = '';
+  oidcName = '';
+  private oidcSecurityService = inject(OidcSecurityService);
 
   constructor() {
-    if (environment.oidc.name !== '') this.oidcName = environment.oidc.name
+    if (environment.oidc.name !== '') this.oidcName = environment.oidc.name;
     else {
-      console.error('OIDC Name not available in environment')
+      console.error('OIDC Name not available in environment');
     }
   }
 
   login() {
-    console.debug('login()')
-    console.debug('start login (oidc authorize()')
-    this.oidcSecurityService.authorize()
+    console.debug('login()');
+    console.debug('start login (oidc authorize()');
+    this.oidcSecurityService.authorize();
   }
 }

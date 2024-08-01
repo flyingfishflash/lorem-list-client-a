@@ -1,7 +1,7 @@
 // @ts-check
-const eslint = require('@eslint/js')
-const tseslint = require('typescript-eslint')
-const angular = require('angular-eslint')
+const eslint = require('@eslint/js');
+const tseslint = require('typescript-eslint');
+const angular = require('angular-eslint');
 
 const baseConfig = tseslint.config(
   {
@@ -128,6 +128,6 @@ const baseConfig = tseslint.config(
     extends: [...angular.configs.templateRecommended],
     rules: {},
   },
-)
+);
 
-module.exports = [...baseConfig]
+module.exports = [...baseConfig];

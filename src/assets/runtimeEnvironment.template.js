@@ -1,5 +1,5 @@
-;(function (window) {
-  window['env'] = window['env'] || {}
+(function (window) {
+  window['env'] = window['env'] || {};
 
   /**
   
@@ -15,18 +15,18 @@
     */
 
   // API_SERVER_URL
-  window['env']['apiServerUrl'] = '${API_SERVER_URL}'
+  window['env']['apiServerUrl'] = '${API_SERVER_URL}';
 
   // OIDC_NAME
-  window['env']['oidcName'] = '${OIDC_NAME}'
+  window['env']['oidcName'] = '${OIDC_NAME}';
   // OIDC_ENDPOINT -> OpenIdConfiguration.Authority
-  window['env']['oidcEndpoint'] = '${OIDC_ENDPOINT}'
+  window['env']['oidcEndpoint'] = '${OIDC_ENDPOINT}';
   // OIDC_CLIENT_ID -> OpenIdConfiguration.ClientId
-  window['env']['oidcClientId'] = '${OIDC_CLIENT_ID}'
+  window['env']['oidcClientId'] = '${OIDC_CLIENT_ID}';
   // OIDC_SCOPE -> OpenIdConfiguration.Authority (appended to 'openid email profile offline_access')
-  window['env']['oidcScope'] = '${OIDC_SCOPE}'
+  window['env']['oidcScope'] = '${OIDC_SCOPE}';
   // OIDC_ROLE_CLAIM: name of claim object containing the user role
-  window['env']['oidcRoleClaim'] = '${OIDC_ROLE_CLAIM}'
+  window['env']['oidcRoleClaim'] = '${OIDC_ROLE_CLAIM}';
   // OIDC_USERNAME_CLAIM: name of claim object containing the user name
-  window['env']['oidcUsernameClaim'] = '${OIDC_USERNAME_CLAIM}'
-})(this)
+  window['env']['oidcUsernameClaim'] = '${OIDC_USERNAME_CLAIM}';
+})(this);

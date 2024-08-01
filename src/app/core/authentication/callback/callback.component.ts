@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-callback',
@@ -9,6 +9,6 @@ import { Component, OnInit } from '@angular/core'
 })
 export class CallbackComponent implements OnInit {
   ngOnInit(): void {
-    console.log('callback component: init')
+    console.log('callback component: init');
   }
 }
