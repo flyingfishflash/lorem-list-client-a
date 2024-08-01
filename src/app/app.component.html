@@ -72,6 +72,16 @@
             <span *ngIf="!isCollapsed">Login</span>
           </span>
         </a>
+        <a
+          [routerLink]="'/logout'"
+          routerLinkActive
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-list-item (click)="logoutOidc()">
+          <span class="entry">
+            <mat-icon>logout</mat-icon>
+            <span *ngIf="!isCollapsed">Logout</span>
+          </span>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
