@@ -1,0 +1,182 @@
+kind: pipeline
+name: build
+type: docker
+
+trigger:
+  event:
+    - push
+    - tag
+  ref:
+    - refs/heads/build-*
+    - refs/heads/ci-*
+    - refs/heads/dependencies
+    - refs/heads/dependency-*
+    - refs/heads/dependency
+    - refs/heads/feature-*
+    - refs/heads/fix-*
+    - refs/heads/main
+    - refs/heads/perf-*
+    - refs/heads/refactor-*
+    - refs/heads/release
+    - refs/heads/style-*
+    - refs/heads/test-*
+
+volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
+
+environment:
+  VERSION: .version
+  BUILD: .build
+
+steps:
+  - name: infer version
+    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
+    commands:
+      # nyx requires git tags to infer the current version
+      - git fetch --tags -q
+      - rm -fv $VERSION
+      - echo "export NYX_CURRENT_VERSION=$(nyx infer --fatal | grep 'current version' | awk '{ print $NF }' | tr -d '\n')" > $VERSION
+      - cat $VERSION
+
+  - name: build
+    image: node:22-alpine
+    depends_on:
+      - infer version
+    commands:
+      - source $VERSION
+      - |
+        cat <<EOT >> $BUILD
+        export BUILD_SCM_COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c1-8)
+        export BUILD_NPM_CACHE=/drone/drone_cache/$DRONE_REPO/npm
+        export BUILD_DIST=/drone/drone_cache/$DRONE_REPO/dist
+        export PATH=/drone/src/node_modules/.bin:$PATH
+        EOT
+      - source $BUILD
+      - env | awk -v s="BUILD_" 'index($0, s) == 1' | LC_ALL=C sort
+      - mkdir -pv $BUILD_NPM_CACHE
+      - mkdir -pv $BUILD_DIST
+      - cd /drone/src
+      - |
+        export JSON_BUILD_PROPERTIES=$(node -pe "
+          JSON.stringify({
+            artifact: new String('lorem-list'),
+            ciPipelineId: process.env.DRONE_BUILD_NUMBER,
+            ciPlatform: new String('drone'),
+            commit: process.env.BUILD_SCM_COMMIT_SHORT_SHA,
+            group: Symbol(''),
+            name: Symbol(''),
+            time: Symbol(''),
+            version: process.env.NYX_CURRENT_VERSION
+          });
+        ")
+      - echo $JSON_BUILD_PROPERTIES > src/assets/buildProperties.json
+      - cat src/assets/buildProperties.json
+      - npm version $NYX_CURRENT_VERSION --no-git-tag-version
+      - npm ci --cache $BUILD_NPM_CACHE --prefer-offline
+      - ng version
+      - ng build --configuration production --output-path=$BUILD_DIST/lorem-list-client-a
+      - printf "\n$(ls -1a $BUILD_DIST/lorem-list-client-a | wc -l) files in $BUILD_DIST/lorem-list-client-a\n"
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
+
+---
+kind: pipeline
+name: 'publish - image'
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/ci-*
+    - refs/heads/dependencies
+    - refs/heads/dependency-*
+    - refs/heads/dependency
+    - refs/heads/feature-*
+    - refs/heads/fix-*
+    - refs/heads/main
+    - refs/heads/perf-*
+    - refs/heads/refactor-*
+    - refs/heads/release
+
+depends_on:
+  - 'build'
+
+volumes:
+  - name: drone_cache_dist
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache/lorem-list/lorem-list-client-a/dist
+
+environment:
+  TAGS: .tags
+  VERSION: .version
+
+steps:
+  - name: check secrets
+    image: alpine
+    environment:
+      EXITCODE: 0
+      REGISTRY:
+        from_secret: registry
+      REGISTRY_HOSTNAME:
+        from_secret: registry_hostname
+      REGISTRY_USERNAME:
+        from_secret: registry_username
+      REGISTRY_PASSWORD:
+        from_secret: registry_password
+    commands:
+      - |
+        if [ -z "$REGISTRY" ]; then
+          echo "registry is not defined"
+          export EXITCODE=1
+        fi
+        if [ -z "$REGISTRY_HOSTNAME" ]; then
+          echo "registry_hostname is not defined"
+          export EXITCODE=1
+        fi
+        if [ -z "$REGISTRY_USERNAME" ]; then
+          echo "registry_username is not defined"
+          export EXITCODE=1
+        fi
+        if [ -z "$REGISTRY_PASSWORD" ]; then
+          echo "registry_password is not defined"
+          export EXITCODE=1
+        fi
+        exit $EXITCODE
+      
+  - name: generate image tags
+    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
+    depends_on:
+      - check secrets
+    commands:
+      # nyx requires git tags to infer the current version
+      - git fetch --tags -q
+      - nyx infer --fatal
+      - nyx infer --fatal | grep 'current version' | awk '{ print $4 > ".version.tmp" }'
+      - tr -d '\n' < .version.tmp > $VERSION
+      - cp $VERSION $TAGS
+      - cat $TAGS && echo
+
+  - name: publish
+    image: plugins/docker
+    depends_on:
+      - generate image tags
+    privileged: true
+    settings:
+      auto_tag: false
+      context: /drone/src/
+      dockerfile: /drone/src/Containerfile
+      repo:
+        from_secret: registry
+      registry:
+        from_secret: registry_hostname
+      username:
+        from_secret: registry_username
+      password:
+        from_secret: registry_password
+    volumes:
+      - name: drone_cache_dist
+        path: /drone/src/dist

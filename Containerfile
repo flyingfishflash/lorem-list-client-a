@@ -1,6 +1,6 @@
 FROM nginx:alpine
-COPY ./docker/docker-entrypoint-custom.sh /docker-entrypoint-custom.sh
-COPY ./docker/ledger.nginx.conf.template /etc/nginx/templates/ledger.conf.template
+COPY ./container/docker-entrypoint-custom.sh /docker-entrypoint-custom.sh
+COPY ./container/lorem-list.nginx.conf.template /etc/nginx/templates/lorem-list.conf.template
 RUN rm -rf /usr/share/nginx/html/* && \
 rm /etc/nginx/conf.d/default.conf && \
 chmod +x /docker-entrypoint-custom.sh

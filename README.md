@@ -4,8 +4,6 @@
 [![Quality Gate Status](https://sonarqube.flyingfishflash.net/api/project_badges/measure?project=net.flyingfishflash%3Alorem-list-api&metric=alert_status&token=sqb_fd87af722ca7ebf25c5d7768dc94390213b1dc61)](https://sonarqube.flyingfishflash.net/dashboard?id=net.flyingfishflash%3Alorem-list-api)
 [![Coverage](https://sonarqube.flyingfishflash.net/api/project_badges/measure?project=net.flyingfishflash%3Alorem-list-api&metric=coverage&token=sqb_fd87af722ca7ebf25c5d7768dc94390213b1dc61)](https://sonarqube.flyingfishflash.net/dashboard?id=net.flyingfishflash%3Alorem-list-api)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.1.2.
-
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
