@@ -40,13 +40,13 @@
         published_ports_client: '{{ dev_published_ports_client }}'
         region_configured: true
       when:
+        - region_configured is not defined
         - region == "dev"
         - (published_ports_client is not defined)
         - (dev_published_ports_client is defined) and (dev_published_ports_client | length > 0)
 
     - name: Define region specific variables - prd
       ansible.builtin.set_fact:
-        published_ports_postgresql: '{{ prd_published_ports_postgresql }}'
         published_ports_client: '{{ prd_published_ports_client }}'
         region_configured: true
       when:
