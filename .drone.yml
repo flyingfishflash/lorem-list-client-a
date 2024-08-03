@@ -296,7 +296,7 @@ steps:
       - cat scripts/ci/drone/deploy/variables.yaml
 
   # the secret containing the ssh private key must be created via the CLI
-  # drone secret add --repository lorem-list/lorem-list-api --name secret_name --data @/home/xxx/.ssh/id_xxx
+  # drone secret add --repository lorem-list/lorem-list-client-a --name secret_name --data @/home/xxx/.ssh/id_xxx
   - name: execute deployment
     image: plugins/ansible
     depends_on:
@@ -304,6 +304,97 @@ steps:
       - create variables file
     settings:
       extra_vars: 'region=dev'
+      galaxy: scripts/ci/drone/deploy/requirements.yaml
+      inventory: scripts/ci/drone/deploy/inventory
+      playbook: scripts/ci/drone/deploy/deploy.yaml
+      private_key:
+        from_secret: drone_deployer_ssh_key_private
+      user:
+        from_secret: drone_deployer_ssh_username
+
+---
+kind: pipeline
+name: 'deploy [prd]'
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/ci-*
+    - refs/heads/feature-*
+    - refs/heads/fix-*
+    - refs/heads/perf-*
+    - refs/heads/refactor-*
+    - refs/heads/main
+
+depends_on:
+  - 'publish - image'
+
+environment:
+  VERSION: .version
+
+steps:
+  - name: infer version
+    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
+    commands:
+      # nyx requires git tags to infer the current version
+      - git fetch --tags -q
+      - rm -fv $VERSION
+      - echo "export NYX_CURRENT_VERSION=$(nyx infer --fatal | grep 'current version' | awk '{ print $NF }' | tr -d '\n')" > $VERSION
+      - cat $VERSION
+
+  - name: create inventory file
+    image: alpine:latest
+    environment:
+      DEPLOY_TO_HOST:
+        from_secret: deploy_to_host
+    commands:
+      - echo "$DEPLOY_TO_HOST" > scripts/ci/drone/deploy/inventory
+
+  - name: create variables file
+    image: alpine
+    depends_on:
+      - infer version
+    environment:
+      REGISTRY_HOSTNAME:
+        from_secret: REGISTRY_HOSTNAME
+      OIDC_NAME:
+        from_secret: OIDC_NAME
+      OIDC_ENDPOINT:
+        from_secret: OIDC_ENDPOINT
+      OIDC_CLIENT_ID:
+        from_secret: OIDC_CLIENT_ID
+      OIDC_SCOPE:
+        from_secret: OIDC_SCOPE
+      OIDC_ROLE_CLAIM:
+        from_secret: OIDC_ROLE_CLAIM
+      OIDC_USERNAME_CLAIM:
+        from_secret: OIDC_USERNAME_CLAIM
+    commands:
+      - source $VERSION
+      - ls -la
+      - echo "---" > scripts/ci/drone/deploy/variables.yaml
+      - 'echo "tag: $NYX_CURRENT_VERSION" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_name: $OIDC_NAME" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_scope: $OIDC_SCOPE" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
+      - cat scripts/ci/drone/deploy/variables.yaml
+
+  # the secret containing the ssh private key must be created via the CLI
+  # drone secret add --repository lorem-list/lorem-list-client-a --name secret_name --data @/home/xxx/.ssh/id_xxx
+  - name: execute deployment
+    image: plugins/ansible
+    depends_on:
+      - create inventory file
+      - create variables file
+    settings:
+      extra_vars: 'region=prd'
       galaxy: scripts/ci/drone/deploy/requirements.yaml
       inventory: scripts/ci/drone/deploy/inventory
       playbook: scripts/ci/drone/deploy/deploy.yaml
