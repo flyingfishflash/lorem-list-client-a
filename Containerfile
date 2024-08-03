@@ -4,5 +4,5 @@ COPY ./container/lorem-list.nginx.conf.template /etc/nginx/templates/lorem-list.
 RUN rm -rf /usr/share/nginx/html/* && \
 rm /etc/nginx/conf.d/default.conf && \
 chmod +x /docker-entrypoint-custom.sh
-COPY ./dist/lorem-list-client-a/ /usr/share/nginx/html/
+COPY ./dist/lorem-list-client-a/browser/ /usr/share/nginx/html/
 ENTRYPOINT ["/docker-entrypoint-custom.sh"]

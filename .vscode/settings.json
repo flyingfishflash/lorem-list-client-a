@@ -1,0 +1,9 @@
+{
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": [
+            "file:///home/gregory/repositories/lorem-list-client-a/scripts/ci/drone/deploy/deploy.yaml",
+            "file:///home/gregory/xdg/documents/repositories/lorem-list-client-a/scripts/ci/drone/deploy/deploy.yaml"
+        ]
+    },
+    "ansible.python.interpreterPath": "/bin/python"
+}

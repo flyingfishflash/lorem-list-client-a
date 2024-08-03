@@ -1,0 +1,146 @@
+---
+- name: Deploy Lorem-List-Client-A via podman
+  hosts: all
+  remote_user: container-runner
+  vars:
+    dev_published_ports_client:
+      - '53173:80'
+    prd_published_ports_client:
+      - '53163:80'
+
+    # https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+
+  tasks:
+    - name: Include variables file
+      ansible.builtin.include_vars:
+        file: variables.yaml
+
+    - name: Ensure region is defined and either 'dev' or 'prd'
+      ansible.builtin.fail:
+        msg: deployment region is not defined or is not set to 'dev' or 'prd'
+      when:
+        - region is not defined
+        - region != "dev"
+        - region != "prd"
+
+    - name: Ensure tag is defined and not empty
+      ansible.builtin.fail:
+        msg: tag is not defined or empty
+      when:
+        - (tag is not defined) or (tag | length == 0)
+
+    - name: Ensure registry_url is defined and not empty
+      ansible.builtin.fail:
+        msg: registry_url is not defined or empty
+      when:
+        - (registry_url is not defined) or (registry_url | length == 0)
+
+    - name: Define region specific variables - dev
+      ansible.builtin.set_fact:
+        published_ports_client: '{{ dev_published_ports_client }}'
+        region_configured: true
+      when:
+        - region == "dev"
+        - (published_ports_client is not defined)
+        - (dev_published_ports_client is defined) and (dev_published_ports_client | length > 0)
+
+    - name: Define region specific variables - prd
+      ansible.builtin.set_fact:
+        published_ports_postgresql: '{{ prd_published_ports_postgresql }}'
+        published_ports_client: '{{ prd_published_ports_client }}'
+        region_configured: true
+      when:
+        - region_configured is not defined
+        - region == "prd"
+        - (published_ports_client is not defined)
+        - (prd_published_ports_client is defined) and (prd_published_ports_client | length > 0)
+
+    - name: Ensure published_ports_client is defined and not empty
+      ansible.builtin.fail:
+        msg: published_ports_client is not defined or empty
+      when:
+        - (published_ports_client is not defined) or (published_ports_client | length == 0)
+
+    - name: Stop Lorem-List-Client-A container services
+      ansible.builtin.systemd:
+        name: '{{ item }}'
+        state: stopped
+        scope: user
+      register: result_systemd_stop
+      failed_when: "result_systemd_stop is failed and 'Could not find the requested service' not in result_systemd_stop.msg"
+      loop:
+        - lorem-list-client-a-{{ region }}
+
+    - name: Remove Lorem-List-Client-A container quadlets
+      ansible.builtin.file:
+        name: ~/.config/containers/systemd/{{ item }}.container
+        state: absent
+      loop:
+        - lorem-list-client-a-{{ region }}
+
+    - name: Remove Lorem-List-Client-A network quadlets
+      ansible.builtin.file:
+        name: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}.network
+        state: absent
+
+    - name: Push network quadlet lorem-list-client-a-{{ region }}
+      ansible.builtin.copy:
+        content: '[Network]'
+        dest: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}.network
+        mode: '0644'
+        force: false
+
+    - name: Define quadlet lorem-list-client-a{{ region }}
+      ansible.builtin.set_fact:
+        quadlet_lorem_list_client_a:
+          service_name: lorem-list-client-a-{{ region }}
+          file_name: lorem-list-client-a-{{ region }}.container
+          unit_description: 'lorem-list-client-a [{{ region }}]'
+          unit_start_limit_interval_sec: 175
+          unit_start_limit_burst: 5
+          container_environment:
+            - UPSTREAM_SERVER: lorem-list-api-{{ region }}.flyingfishflash.net
+            - API_SERVER_URL: https://lorem-list-api-{{ region }}.flyingfishflash.net/api/v1
+            - OIDC_NAME: '{{ oidc_name }}'
+            - OIDC_ENDPOINT: '{{ oidc_endpoint }}'
+            - OIDC_CLIENT_ID: '{{ oidc_client_id }}'
+            - OIDC_SCOPE: '{{ oidc_scope }}'
+            - OIDC_ROLE_CLAIM: '{{ oidc_role_claim }}'
+            - OIDC_USERNAME_CLAIM: '{{ oidc_username_claim }}'
+          container_image: '{{ registry_url }}/lorem-list-client-a:{{ tag }}'
+          container_log_driver: journald
+          container_container_name: lorem-list-client-a-{{ region }}
+          container_network: lorem-list-client-a-{{ region }}.network
+          container_podman_args:
+            - '--log-opt "tag=podman/lorem-list-client-a-{{ region }}"'
+          container_publish_port: '{{ published_ports_client }}'
+          service_restart: on-failure
+          service_restart_sec: 35
+          install_wanted_by: default.target
+
+    - name: Define quadlet
+      ansible.builtin.set_fact:
+        quadlet: '{{ quadlet_lorem_list_client_a }}'
+
+    - name: Push container quadlet
+      ansible.builtin.template:
+        src: quadlets/quadlet.container.j2
+        dest: ~/.config/containers/systemd/{{ quadlet.file_name }}
+        mode: '0644'
+
+    - name: Re-read systemd configuration
+      ansible.builtin.systemd:
+        daemon_reload: true
+        scope: user
+
+    - name: Pull image lorem-list-client-a:{{ tag }}
+      containers.podman.podman_image:
+        name: registry.flyingfishflash.net/lorem-list/lorem-list-client-a
+        force: true
+        tag: '{{ tag }}'
+
+    - name: Start lorem-list-client-a-{{ region }}
+      ansible.builtin.systemd:
+        name: lorem-list-client-a-{{ region }}
+        state: started
+        scope: user

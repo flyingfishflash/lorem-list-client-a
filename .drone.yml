@@ -1,11 +1,10 @@
 kind: pipeline
-name: build
+name: check secrets
 type: docker
 
 trigger:
   event:
     - push
-    - tag
   ref:
     - refs/heads/build-*
     - refs/heads/ci-*
@@ -20,6 +19,80 @@ trigger:
     - refs/heads/release
     - refs/heads/style-*
     - refs/heads/test-*
+
+steps:
+  - name: check secrets
+    image: alpine
+    environment:
+      EXITCODE: 0
+      REGISTRY:
+        from_secret: registry
+      REGISTRY_HOSTNAME:
+        from_secret: registry_hostname
+      REGISTRY_USERNAME:
+        from_secret: registry_username
+      REGISTRY_PASSWORD:
+        from_secret: registry_password
+      DEPLOY_TO_HOST:
+        from_secret: deploy_to_host
+      DRONE_DEPLOYER_SSH_KEY_PRIVATE:
+        from_secret: drone_deployer_ssh_key_private
+      DRONE_DEPLOYER_SSH_USERNAME:
+        from_secret: drone_deployer_ssh_username
+      OIDC_NAME:
+        from_secret: OIDC_NAME
+      OIDC_ENDPOINT:
+        from_secret: OIDC_ENDPOINT
+      OIDC_CLIENT_ID:
+        from_secret: OIDC_CLIENT_ID
+      OIDC_SCOPE:
+        from_secret: OIDC_SCOPE
+      OIDC_ROLE_CLAIM:
+        from_secret: OIDC_ROLE_CLAIM
+      OIDC_USERNAME_CLAIM:
+        from_secret: OIDC_USERNAME_CLAIM
+    commands:
+      - 'if [ -z "$REGISTRY" ]; then echo "registry is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$REGISTRY_HOSTNAME" ]; then echo "registry_hostname is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$REGISTRY_USERNAME" ]; then echo "deploy_to_host is not registry_username"; export EXITCODE=1; fi'
+      - 'if [ -z "$REGISTRY_PASSWORD" ]; then echo "registry_password is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$DEPLOY_TO_HOST" ]; then echo "deploy_to_host is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$REGISTRY_HOSTNAME" ]; then echo "ERROR: registry_hostname is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$DRONE_DEPLOYER_SSH_KEY_PRIVATE" ]; then echo "ERROR: drone_deployer_ssh_key_private is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$DRONE_DEPLOYER_SSH_USERNAME" ]; then echo "ERROR: drone_deployer_ssh_username is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$OIDC_NAME" ]; then echo "ERROR: OIDC_NAME is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$OIDC_ENDPOINT" ]; then echo "ERROR: OIDC_ENDPOINT is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$OIDC_CLIENT_ID" ]; then echo "ERROR: OIDC_CLIENT_ID is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$OIDC_SCOPE" ]; then echo "ERROR: OIDC_SCOPE is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$OIDC_ROLE_CLAIM" ]; then echo "ERROR: OIDC_ROLE_CLAIM is not defined"; export EXITCODE=1; fi'
+      - 'if [ -z "$OIDC_USERNAME_CLAIM" ]; then echo "ERROR: OIDC_USERNAME_CLAIM is not defined"; export EXITCODE=1; fi'
+      - exit $EXITCODE
+
+---
+kind: pipeline
+name: build
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/build-*
+    - refs/heads/ci-*
+    - refs/heads/dependencies
+    - refs/heads/dependency-*
+    - refs/heads/dependency
+    - refs/heads/feature-*
+    - refs/heads/fix-*
+    - refs/heads/main
+    - refs/heads/perf-*
+    - refs/heads/refactor-*
+    - refs/heads/release
+    - refs/heads/style-*
+    - refs/heads/test-*
+
+depends_on:
+  - 'check secrets'
 
 volumes:
   - name: drone_cache
@@ -78,6 +151,7 @@ steps:
       - ng version
       - ng build --configuration production --output-path=$BUILD_DIST/lorem-list-client-a
       - printf "\n$(ls -1a $BUILD_DIST/lorem-list-client-a | wc -l) files in $BUILD_DIST/lorem-list-client-a\n"
+      - ls -la $BUILD_DIST/lorem-list-client-a
     volumes:
       - name: drone_cache
         path: /drone/drone_cache
@@ -115,42 +189,8 @@ environment:
   VERSION: .version
 
 steps:
-  - name: check secrets
-    image: alpine
-    environment:
-      EXITCODE: 0
-      REGISTRY:
-        from_secret: registry
-      REGISTRY_HOSTNAME:
-        from_secret: registry_hostname
-      REGISTRY_USERNAME:
-        from_secret: registry_username
-      REGISTRY_PASSWORD:
-        from_secret: registry_password
-    commands:
-      - |
-        if [ -z "$REGISTRY" ]; then
-          echo "registry is not defined"
-          export EXITCODE=1
-        fi
-        if [ -z "$REGISTRY_HOSTNAME" ]; then
-          echo "registry_hostname is not defined"
-          export EXITCODE=1
-        fi
-        if [ -z "$REGISTRY_USERNAME" ]; then
-          echo "registry_username is not defined"
-          export EXITCODE=1
-        fi
-        if [ -z "$REGISTRY_PASSWORD" ]; then
-          echo "registry_password is not defined"
-          export EXITCODE=1
-        fi
-        exit $EXITCODE
-      
   - name: generate image tags
     image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
-    depends_on:
-      - check secrets
     commands:
       # nyx requires git tags to infer the current version
       - git fetch --tags -q
@@ -180,3 +220,94 @@ steps:
     volumes:
       - name: drone_cache_dist
         path: /drone/src/dist
+
+---
+kind: pipeline
+name: 'deploy [dev]'
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/ci-*
+    - refs/heads/feature-*
+    - refs/heads/fix-*
+    - refs/heads/perf-*
+    - refs/heads/refactor-*
+    - refs/heads/main
+
+depends_on:
+  - 'publish - image'
+
+environment:
+  VERSION: .version
+
+steps:
+  - name: infer version
+    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
+    commands:
+      # nyx requires git tags to infer the current version
+      - git fetch --tags -q
+      - rm -fv $VERSION
+      - echo "export NYX_CURRENT_VERSION=$(nyx infer --fatal | grep 'current version' | awk '{ print $NF }' | tr -d '\n')" > $VERSION
+      - cat $VERSION
+
+  - name: create inventory file
+    image: alpine:latest
+    environment:
+      DEPLOY_TO_HOST:
+        from_secret: deploy_to_host
+    commands:
+      - echo "$DEPLOY_TO_HOST" > scripts/ci/drone/deploy/inventory
+
+  - name: create variables file
+    image: alpine
+    depends_on:
+      - infer version
+    environment:
+      REGISTRY_HOSTNAME:
+        from_secret: REGISTRY_HOSTNAME
+      OIDC_NAME:
+        from_secret: OIDC_NAME
+      OIDC_ENDPOINT:
+        from_secret: OIDC_ENDPOINT
+      OIDC_CLIENT_ID:
+        from_secret: OIDC_CLIENT_ID
+      OIDC_SCOPE:
+        from_secret: OIDC_SCOPE
+      OIDC_ROLE_CLAIM:
+        from_secret: OIDC_ROLE_CLAIM
+      OIDC_USERNAME_CLAIM:
+        from_secret: OIDC_USERNAME_CLAIM
+    commands:
+      - source $VERSION
+      - ls -la
+      - echo "---" > scripts/ci/drone/deploy/variables.yaml
+      - 'echo "tag: $NYX_CURRENT_VERSION" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_name: $OIDC_NAME" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_scope: $OIDC_SCOPE" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
+      - cat scripts/ci/drone/deploy/variables.yaml
+
+  # the secret containing the ssh private key must be created via the CLI
+  # drone secret add --repository lorem-list/lorem-list-api --name secret_name --data @/home/xxx/.ssh/id_xxx
+  - name: execute deployment
+    image: plugins/ansible
+    depends_on:
+      - create inventory file
+      - create variables file
+    settings:
+      extra_vars: 'region=dev'
+      galaxy: scripts/ci/drone/deploy/requirements.yaml
+      inventory: scripts/ci/drone/deploy/inventory
+      playbook: scripts/ci/drone/deploy/deploy.yaml
+      private_key:
+        from_secret: drone_deployer_ssh_key_private
+      user:
+        from_secret: drone_deployer_ssh_username
