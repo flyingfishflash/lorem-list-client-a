@@ -259,7 +259,7 @@ steps:
 
 ---
 kind: pipeline
-name: 'publish - release'
+name: 'publish - release detail'
 type: docker
 
 trigger:
