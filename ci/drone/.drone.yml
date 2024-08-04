@@ -7,10 +7,9 @@ trigger:
     - push
   ref:
     - refs/heads/build-*
+    - refs/heads/chore-*
     - refs/heads/ci-*
     - refs/heads/dependencies
-    - refs/heads/dependency-*
-    - refs/heads/dependency
     - refs/heads/feature-*
     - refs/heads/fix-*
     - refs/heads/main
@@ -70,6 +69,49 @@ steps:
 
 ---
 kind: pipeline
+name: infer and cache version
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/build-*
+    - refs/heads/chore-*
+    - refs/heads/ci-*
+    - refs/heads/dependencies
+    - refs/heads/feature-*
+    - refs/heads/fix-*
+    - refs/heads/main
+    - refs/heads/perf-*
+    - refs/heads/refactor-*
+    - refs/heads/release
+    - refs/heads/style-*
+    - refs/heads/test-*
+
+volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
+
+environment:
+  VERSION: .version
+
+steps:
+  - name: infer and cache version
+    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
+    commands:
+      - export CACHE_VERSION=/drone/drone_cache/$DRONE_REPO/$VERSION
+      # nyx requires git tags to infer the version
+      - git fetch --tags -q
+      - echo "export NYX_CURRENT_VERSION=$(nyx infer --fatal | grep 'current version' | awk '{ print $NF }' | tr -d '\n')" > $CACHE_VERSION
+      - cat $CACHE_VERSION
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
+
+---
+kind: pipeline
 name: build
 type: docker
 
@@ -78,10 +120,9 @@ trigger:
     - push
   ref:
     - refs/heads/build-*
+    - refs/heads/chore-*
     - refs/heads/ci-*
     - refs/heads/dependencies
-    - refs/heads/dependency-*
-    - refs/heads/dependency
     - refs/heads/feature-*
     - refs/heads/fix-*
     - refs/heads/main
@@ -93,6 +134,7 @@ trigger:
 
 depends_on:
   - 'check secrets'
+  - infer and cache version
 
 volumes:
   - name: drone_cache
@@ -104,21 +146,11 @@ environment:
   BUILD: .build
 
 steps:
-  - name: infer version
-    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
-    commands:
-      # nyx requires git tags to infer the current version
-      - git fetch --tags -q
-      - rm -fv $VERSION
-      - echo "export NYX_CURRENT_VERSION=$(nyx infer --fatal | grep 'current version' | awk '{ print $NF }' | tr -d '\n')" > $VERSION
-      - cat $VERSION
-
   - name: build
     image: node:22-alpine
-    depends_on:
-      - infer version
     commands:
-      - source $VERSION
+      - export CACHE_VERSION=/drone/drone_cache/$DRONE_REPO/$VERSION
+      - source $CACHE_VERSION
       - |
         cat <<EOT >> $BUILD
         export BUILD_SCM_COMMIT_SHORT_SHA=$(echo $DRONE_COMMIT_SHA | cut -c1-8)
@@ -166,12 +198,10 @@ trigger:
     - push
   ref:
     - refs/heads/ci-*
+    - refs/heads/chore-*
     - refs/heads/dependencies
-    - refs/heads/dependency-*
-    - refs/heads/dependency
     - refs/heads/feature-*
     - refs/heads/fix-*
-    - refs/heads/main
     - refs/heads/perf-*
     - refs/heads/refactor-*
     - refs/heads/release
@@ -180,6 +210,9 @@ depends_on:
   - 'build'
 
 volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
   - name: drone_cache_dist
     host:
       path: /var/lib/docker/volumes_managed/drone_cache/lorem-list/lorem-list-client-a/dist
@@ -190,15 +223,18 @@ environment:
 
 steps:
   - name: generate image tags
-    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
+    image: alpine:latest
     commands:
-      # nyx requires git tags to infer the current version
-      - git fetch --tags -q
-      - nyx infer --fatal
-      - nyx infer --fatal | grep 'current version' | awk '{ print $4 > ".version.tmp" }'
-      - tr -d '\n' < .version.tmp > $VERSION
-      - cp $VERSION $TAGS
+      - export CACHE_VERSION=/drone/drone_cache/$DRONE_REPO/$VERSION
+      - cat $CACHE_VERSION
+      - source $CACHE_VERSION
+      - echo $NYX_CURRENT_VERSION > .version.tmp
+      - tr -d '\n' < .version.tmp > $TAGS
+      - rm .version.tmp
       - cat $TAGS && echo
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
 
   - name: publish
     image: plugins/docker
@@ -207,7 +243,7 @@ steps:
     privileged: true
     settings:
       auto_tag: false
-      context: /drone/src/
+      context: /drone/src
       dockerfile: /drone/src/Containerfile
       repo:
         from_secret: registry
@@ -223,49 +259,96 @@ steps:
 
 ---
 kind: pipeline
-name: 'deploy [dev]'
+name: 'publish - release'
 type: docker
 
 trigger:
   event:
     - push
   ref:
+    - refs/heads/release
+
+depends_on:
+  - 'publish - image'
+
+volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
+
+steps:
+  - name: 'publish - release detail'
+    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
+    environment:
+      NYX_FLYINGFISHFLASH_TOKEN_CODEBERG:
+        from_secret: nyx_flyingfishflash_token_codeberg
+      #      NYX_FLYINGFISHFLASH_TOKEN_GITHUB:
+      #        from_secret: nyx_flyingfishflash_token_github
+      #      NYX_FLYINGFISHFLASH_TOKEN_GITLAB:
+      #        from_secret: nyx_flyingfishflash_token_gitlab
+      NYX_FLYINGFISHFLASH_TOKEN_LAN:
+        from_secret: nyx_flyingfishflash_token_lan
+    commands:
+      # nyx requires git tags to infer the current version
+      - git fetch --tags -q
+      # nyx is configured to push to the 'lan' remote
+      # the 'lan' remote is mirrored to codeberg
+      - git remote add lan https://forgejo.flyingfishflash.net/lorem-list/lorem-list-client-a.git
+      - mkdir /drone/src/build
+      - nyx publish --dry-run=false
+    volumes:
+      - name: drone_cache
+        path: /drone/cache
+
+---
+kind: pipeline
+name: 'prepare deployment'
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/chore-*
     - refs/heads/ci-*
+    - refs/heads/dependencies
     - refs/heads/feature-*
     - refs/heads/fix-*
     - refs/heads/perf-*
     - refs/heads/refactor-*
-    - refs/heads/main
+    - refs/heads/release
 
 depends_on:
   - 'publish - image'
+
+volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
 
 environment:
   VERSION: .version
 
 steps:
-  - name: infer version
-    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
-    commands:
-      # nyx requires git tags to infer the current version
-      - git fetch --tags -q
-      - rm -fv $VERSION
-      - echo "export NYX_CURRENT_VERSION=$(nyx infer --fatal | grep 'current version' | awk '{ print $NF }' | tr -d '\n')" > $VERSION
-      - cat $VERSION
-
   - name: create inventory file
-    image: alpine:latest
+    image: alpine
     environment:
       DEPLOY_TO_HOST:
         from_secret: deploy_to_host
     commands:
-      - echo "$DEPLOY_TO_HOST" > ci/drone/deploy/inventory
+      - export CACHE_DEPLOY=/drone/drone_cache/$DRONE_REPO/deploy
+      - mkdir -pv $CACHE_DEPLOY
+      - echo "$DEPLOY_TO_HOST" > $CACHE_DEPLOY/inventory
+      - cat $CACHE_DEPLOY/inventory
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
 
   - name: create variables file
     image: alpine
-    depends_on:
-      - infer version
     environment:
+      DEPLOY_TO_HOST:
+        from_secret: deploy_to_host
       REGISTRY_HOSTNAME:
         from_secret: REGISTRY_HOSTNAME
       OIDC_NAME:
@@ -281,27 +364,73 @@ steps:
       OIDC_USERNAME_CLAIM:
         from_secret: OIDC_USERNAME_CLAIM
     commands:
-      - source $VERSION
-      - ls -la
-      - echo "---" > ci/drone/deploy/variables.yaml
-      - 'echo "tag: $NYX_CURRENT_VERSION" >> ci/drone/deploy/variables.yaml'
-      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> ci/drone/deploy/variables.yaml'
-      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_name: $OIDC_NAME" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_scope: $OIDC_SCOPE" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> ci/drone/deploy/variables.yaml'
-      - cat ci/drone/deploy/variables.yaml
+      - export CACHE_DEPLOY=/drone/drone_cache/$DRONE_REPO/deploy
+      - export CACHE_VERSION=/drone/drone_cache/$DRONE_REPO/$VERSION
+      - source $CACHE_VERSION
+      - mkdir -pv $CACHE_DEPLOY
+      - echo "---" > $CACHE_DEPLOY/variables.yaml
+      - 'echo "tag: $NYX_CURRENT_VERSION" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "oidc_name: $OIDC_NAME" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "oidc_scope: $OIDC_SCOPE" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> $CACHE_DEPLOY/variables.yaml'
+      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> $CACHE_DEPLOY/variables.yaml'
+      - ls -l $CACHE_DEPLOY
+      - cat $CACHE_DEPLOY/inventory
+      - cat $CACHE_DEPLOY/variables.yaml
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
+
+---
+kind: pipeline
+name: 'deploy [dev]'
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/chore-*
+    - refs/heads/ci-*
+    - refs/heads/dependencies
+    - refs/heads/feature-*
+    - refs/heads/fix-*
+    - refs/heads/perf-*
+    - refs/heads/refactor-*
+
+depends_on:
+  - 'prepare deployment'
+
+volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
+
+environment:
+  VERSION: .version
+
+steps:
+  - name: restore playbook files from cache
+    image: alpine:latest
+    commands:
+      - export CACHE_DEPLOY=/drone/drone_cache/$DRONE_REPO/deploy
+      - cp -v $CACHE_DEPLOY/variables.yaml ci/drone/deploy/
+      - cp -v $CACHE_DEPLOY/inventory ci/drone/deploy/
+      - ls -l ci/drone/deploy/
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
 
   # the secret containing the ssh private key must be created via the CLI
   # drone secret add --repository lorem-list/lorem-list-client-a --name secret_name --data @/home/xxx/.ssh/id_xxx
   - name: execute deployment
     image: plugins/ansible
     depends_on:
-      - create inventory file
-      - create variables file
+      - restore playbook files from cache
     settings:
       extra_vars: 'region=dev'
       galaxy: ci/drone/deploy/requirements.yaml
@@ -321,78 +450,37 @@ trigger:
   event:
     - push
   ref:
-    - refs/heads/ci-*
-    - refs/heads/feature-*
-    - refs/heads/fix-*
-    - refs/heads/perf-*
-    - refs/heads/refactor-*
-    - refs/heads/main
+    - refs/heads/release
 
 depends_on:
-  - 'publish - image'
+  - 'prepare deployment'
+
+volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
 
 environment:
   VERSION: .version
 
 steps:
-  - name: infer version
-    image: registry.flyingfishflash.net/flyingfishflash/nyx:latest
-    commands:
-      # nyx requires git tags to infer the current version
-      - git fetch --tags -q
-      - rm -fv $VERSION
-      - echo "export NYX_CURRENT_VERSION=$(nyx infer --fatal | grep 'current version' | awk '{ print $NF }' | tr -d '\n')" > $VERSION
-      - cat $VERSION
-
-  - name: create inventory file
+  - name: restore playbook files from cache
     image: alpine:latest
-    environment:
-      DEPLOY_TO_HOST:
-        from_secret: deploy_to_host
     commands:
-      - echo "$DEPLOY_TO_HOST" > ci/drone/deploy/inventory
-
-  - name: create variables file
-    image: alpine
-    depends_on:
-      - infer version
-    environment:
-      REGISTRY_HOSTNAME:
-        from_secret: REGISTRY_HOSTNAME
-      OIDC_NAME:
-        from_secret: OIDC_NAME
-      OIDC_ENDPOINT:
-        from_secret: OIDC_ENDPOINT
-      OIDC_CLIENT_ID:
-        from_secret: OIDC_CLIENT_ID
-      OIDC_SCOPE:
-        from_secret: OIDC_SCOPE
-      OIDC_ROLE_CLAIM:
-        from_secret: OIDC_ROLE_CLAIM
-      OIDC_USERNAME_CLAIM:
-        from_secret: OIDC_USERNAME_CLAIM
-    commands:
-      - source $VERSION
-      - ls -la
-      - echo "---" > ci/drone/deploy/variables.yaml
-      - 'echo "tag: $NYX_CURRENT_VERSION" >> ci/drone/deploy/variables.yaml'
-      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> ci/drone/deploy/variables.yaml'
-      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_name: $OIDC_NAME" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_scope: $OIDC_SCOPE" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> ci/drone/deploy/variables.yaml'
-      - cat ci/drone/deploy/variables.yaml
+      - export CACHE_DEPLOY=/drone/drone_cache/$DRONE_REPO/deploy
+      - cp -v $CACHE_DEPLOY/variables.yaml ci/drone/deploy/
+      - cp -v $CACHE_DEPLOY/inventory ci/drone/deploy/
+      - ls -l ci/drone/deploy/
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
 
   # the secret containing the ssh private key must be created via the CLI
   # drone secret add --repository lorem-list/lorem-list-client-a --name secret_name --data @/home/xxx/.ssh/id_xxx
   - name: execute deployment
     image: plugins/ansible
     depends_on:
-      - create inventory file
-      - create variables file
+      - restore playbook files from cache
     settings:
       extra_vars: 'region=prd'
       galaxy: ci/drone/deploy/requirements.yaml
@@ -402,3 +490,43 @@ steps:
         from_secret: drone_deployer_ssh_key_private
       user:
         from_secret: drone_deployer_ssh_username
+
+---
+kind: pipeline
+name: 'clean cache'
+type: docker
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/*
+
+depends_on:
+  - 'deploy [dev]'
+  - 'deploy [prd]'
+
+volumes:
+  - name: drone_cache
+    host:
+      path: /var/lib/docker/volumes_managed/drone_cache
+
+environment:
+  VERSION: .version
+
+steps:
+  - name: clean cache
+    image: alpine:latest
+    commands:
+      - export CACHE_VERSION=/drone/drone_cache/$DRONE_REPO/$VERSION
+      - export CACHE_DEPLOY=/drone/drone_cache/$DRONE_REPO/deploy
+      - export CACHE_DIST=/drone/drone_cache/$DRONE_REPO/dist
+      - echo $CACHE_VERSION
+      - echo $CACHE_DEPLOY
+      - echo $CACHE_DIST
+      - rm -vf $CACHE_VERSION
+      - rm -rvf $CACHE_DEPLOY
+      - rm -rvf $CACHE_DIST
+    volumes:
+      - name: drone_cache
+        path: /drone/drone_cache
