@@ -259,7 +259,7 @@ steps:
       DEPLOY_TO_HOST:
         from_secret: deploy_to_host
     commands:
-      - echo "$DEPLOY_TO_HOST" > scripts/ci/drone/deploy/inventory
+      - echo "$DEPLOY_TO_HOST" > ci/drone/deploy/inventory
 
   - name: create variables file
     image: alpine
@@ -283,17 +283,17 @@ steps:
     commands:
       - source $VERSION
       - ls -la
-      - echo "---" > scripts/ci/drone/deploy/variables.yaml
-      - 'echo "tag: $NYX_CURRENT_VERSION" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_name: $OIDC_NAME" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_scope: $OIDC_SCOPE" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
-      - cat scripts/ci/drone/deploy/variables.yaml
+      - echo "---" > ci/drone/deploy/variables.yaml
+      - 'echo "tag: $NYX_CURRENT_VERSION" >> ci/drone/deploy/variables.yaml'
+      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> ci/drone/deploy/variables.yaml'
+      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_name: $OIDC_NAME" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_scope: $OIDC_SCOPE" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> ci/drone/deploy/variables.yaml'
+      - cat ci/drone/deploy/variables.yaml
 
   # the secret containing the ssh private key must be created via the CLI
   # drone secret add --repository lorem-list/lorem-list-client-a --name secret_name --data @/home/xxx/.ssh/id_xxx
@@ -304,9 +304,9 @@ steps:
       - create variables file
     settings:
       extra_vars: 'region=dev'
-      galaxy: scripts/ci/drone/deploy/requirements.yaml
-      inventory: scripts/ci/drone/deploy/inventory
-      playbook: scripts/ci/drone/deploy/deploy.yaml
+      galaxy: ci/drone/deploy/requirements.yaml
+      inventory: ci/drone/deploy/inventory
+      playbook: ci/drone/deploy/deploy.yaml
       private_key:
         from_secret: drone_deployer_ssh_key_private
       user:
@@ -350,7 +350,7 @@ steps:
       DEPLOY_TO_HOST:
         from_secret: deploy_to_host
     commands:
-      - echo "$DEPLOY_TO_HOST" > scripts/ci/drone/deploy/inventory
+      - echo "$DEPLOY_TO_HOST" > ci/drone/deploy/inventory
 
   - name: create variables file
     image: alpine
@@ -374,17 +374,17 @@ steps:
     commands:
       - source $VERSION
       - ls -la
-      - echo "---" > scripts/ci/drone/deploy/variables.yaml
-      - 'echo "tag: $NYX_CURRENT_VERSION" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_name: $OIDC_NAME" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_scope: $OIDC_SCOPE" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
-      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> scripts/ci/drone/deploy/variables.yaml'
-      - cat scripts/ci/drone/deploy/variables.yaml
+      - echo "---" > ci/drone/deploy/variables.yaml
+      - 'echo "tag: $NYX_CURRENT_VERSION" >> ci/drone/deploy/variables.yaml'
+      - 'echo "registry_url: $REGISTRY_HOSTNAME/lorem-list" >> ci/drone/deploy/variables.yaml'
+      - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_name: $OIDC_NAME" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_scope: $OIDC_SCOPE" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> ci/drone/deploy/variables.yaml'
+      - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> ci/drone/deploy/variables.yaml'
+      - cat ci/drone/deploy/variables.yaml
 
   # the secret containing the ssh private key must be created via the CLI
   # drone secret add --repository lorem-list/lorem-list-client-a --name secret_name --data @/home/xxx/.ssh/id_xxx
@@ -395,9 +395,9 @@ steps:
       - create variables file
     settings:
       extra_vars: 'region=prd'
-      galaxy: scripts/ci/drone/deploy/requirements.yaml
-      inventory: scripts/ci/drone/deploy/inventory
-      playbook: scripts/ci/drone/deploy/deploy.yaml
+      galaxy: ci/drone/deploy/requirements.yaml
+      inventory: ci/drone/deploy/inventory
+      playbook: ci/drone/deploy/deploy.yaml
       private_key:
         from_secret: drone_deployer_ssh_key_private
       user:
