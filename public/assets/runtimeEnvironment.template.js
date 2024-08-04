@@ -9,7 +9,7 @@
       See /container/docker-entrypoint-custom.sh:
       /usr/local/bin/envsubst < /usr/share/nginx/html/assets/runtimeEnvironment.template.js > /usr/share/nginx/html/assets/runtimeEnvironment.js
   
-      When developing locally, the values could be set in src/assets/runtimeEnvironment.development.js,
+      When developing locally, the values could be set in src/public/assets/runtimeEnvironment.development.js,
       however they should be set in /src/environments/environment.ts
   
     */

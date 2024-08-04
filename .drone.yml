@@ -144,8 +144,8 @@ steps:
             version: process.env.NYX_CURRENT_VERSION
           });
         ")
-      - echo $JSON_BUILD_PROPERTIES > src/assets/buildProperties.json
-      - cat src/assets/buildProperties.json
+      - echo $JSON_BUILD_PROPERTIES > public/assets/buildProperties.json
+      - cat public/assets/buildProperties.json
       - npm version $NYX_CURRENT_VERSION --no-git-tag-version
       - npm ci --cache $BUILD_NPM_CACHE --prefer-offline
       - ng version
