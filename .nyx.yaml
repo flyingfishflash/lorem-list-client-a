@@ -1,20 +1,20 @@
 ---
 dryRun: true
-preset: "simple"
-verbosity: "DEBUG"
+preset: 'simple'
+verbosity: 'DEBUG'
 summary: true
 changelog:
-  path: "build/CHANGELOG.md"
-  template: ".nyx-changelog.template"
+  path: 'build/CHANGELOG.md'
+  template: '.nyx-changelog.template'
   sections:
-    "Dependencies": "^dependency$"
-    "Additions": "^feature$"
-    "Changes": "(^refactor$|^perf$)"
-    "Fixes": "^fix$"
-    "Continuous Integration": "^ci$"
-    "Build": "^build$"
-    "Tests": "^test$"
-    "Documentation": "^docs$"
+    'Dependencies': '^dependency$'
+    'Additions': '^feature$'
+    'Changes': '(^refactor$|^perf$)'
+    'Fixes': '^fix$'
+    'Continuous Integration': '^ci$'
+    'Build': '^build$'
+    'Tests': '^test$'
+    'Documentation': '^doc$'
 commitMessageConventions:
   enabled:
     - conventionalCommitsCustom
@@ -22,15 +22,15 @@ commitMessageConventions:
     conventionalCommitsCustom:
       expression: "(?m)^(?<type>[a-zA-Z0-9_]+)(!)?(\\((?<scope>[a-z ]+)\\))?:( (?<title>.+))$(?s).*"
       bumpExpressions:
-        major: "(?s)(?m)^[a-zA-Z0-9_]+(!|.*^(BREAKING( |-)CHANGE: )).*"
-        minor: "(?s)(?m)^feature(?!!|.*^(BREAKING( |-)CHANGE: )).*"
-        patch: "(?s)(?m)(^ci|^dependency|^fix|^perf|^refactor)(?!!|.*^(BREAKING( |-)CHANGE: )).*"
+        major: '(?s)(?m)^[a-zA-Z0-9_]+(!|.*^(BREAKING( |-)CHANGE: )).*'
+        minor: '(?s)(?m)^feature(?!!|.*^(BREAKING( |-)CHANGE: )).*'
+        patch: '(?s)(?m)(^ci|^dependency|^fix|^perf|^refactor)(?!!|.*^(BREAKING( |-)CHANGE: )).*'
 git:
   remotes:
     lan:
       authenticationMethod: USER_PASSWORD
-      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
-      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
+      user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
+      password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
 #    codeberg:
 #      authenticationMethod: USER_PASSWORD
 #      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
@@ -48,62 +48,61 @@ releaseTypes:
   items:
     mainline:
       collapseVersions: false
-      description: "{{#fileContent}}build/CHANGELOG.md{{/fileContent}}"
+      description: '{{#fileContent}}build/CHANGELOG.md{{/fileContent}}'
       filterTags: "^({{configuration.releasePrefix}})?([0-9]\\d*)\\.([0-9]\\d*)\\.([0-9]\\d*)$"
-      gitCommit: "false"
-      gitPush: "false"
-      gitTag: "false"
-      matchBranches: "^main$"
+      gitCommit: 'false'
+      gitPush: 'false'
+      gitTag: 'false'
+      matchBranches: '^main$'
       matchEnvironmentVariables:
-        CI: "^true$"
-      matchWorkspaceStatus: "CLEAN"
-      publish: "false"
+        CI: '^true$'
+      matchWorkspaceStatus: 'CLEAN'
+      publish: 'false'
     release:
       collapseVersions: false
-      description: "{{#fileContent}}build/CHANGELOG.md{{/fileContent}}"
+      description: '{{#fileContent}}build/CHANGELOG.md{{/fileContent}}'
       filterTags: "^({{configuration.releasePrefix}})?([0-9]\\d*)\\.([0-9]\\d*)\\.([0-9]\\d*)$"
-      gitCommit: "false"
-      gitPush: "true"
-      gitTag: "true"
-      matchBranches: "^release$"
+      gitCommit: 'false'
+      gitPush: 'true'
+      gitTag: 'true'
+      matchBranches: '^release$'
       matchEnvironmentVariables:
-        CI: "^true$"
-      matchWorkspaceStatus: "CLEAN"
-      publish: "true"
+        CI: '^true$'
+      matchWorkspaceStatus: 'CLEAN'
+      publish: 'true'
     internal:
-      gitCommit: "false"
-      gitPush: "false"
-      gitTag: "false"
-      publish: "false"
+      gitCommit: 'false'
+      gitPush: 'false'
+      gitTag: 'false'
+      publish: 'false'
       identifiers:
-        -
-          position: PRE_RELEASE
-          qualifier: "{{#lower}}{{branch}}{{/lower}}"
-          value: "{{#sanitize}}{{#environmentVariable}}DRONE_BUILD_NUMBER{{/environmentVariable}}{{/sanitize}}"
+        - position: PRE_RELEASE
+          qualifier: '{{#lower}}{{branch}}{{/lower}}'
+          value: '{{#sanitize}}{{#environmentVariable}}DRONE_BUILD_NUMBER{{/environmentVariable}}{{/sanitize}}'
 services:
   codeberg:
-    type: "GITHUB"
+    type: 'GITHUB'
     options:
-      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
-      BASE_URI: "https://codeberg.org/api/v1"
-      REPOSITORY_NAME: "lorem-list-api"
-      REPOSITORY_OWNER: "lorem-list"
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
+      BASE_URI: 'https://codeberg.org/api/v1'
+      REPOSITORY_NAME: 'lorem-list-api'
+      REPOSITORY_OWNER: 'lorem-list'
   lan:
-    type: "GITHUB"
+    type: 'GITHUB'
     options:
-      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
-      BASE_URI: "https://forgejo.flyingfishflash.net/api/v1"
-      REPOSITORY_NAME: "lorem-list-api"
-      REPOSITORY_OWNER: "lorem-list"
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
+      BASE_URI: 'https://forgejo.flyingfishflash.net/api/v1'
+      REPOSITORY_NAME: 'lorem-list-api'
+      REPOSITORY_OWNER: 'lorem-list'
   github:
-    type: "GITHUB"
+    type: 'GITHUB'
     options:
-      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}"
-      REPOSITORY_NAME: "lorem-list-api"
-      REPOSITORY_OWNER: "flyingfishflash"
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}'
+      REPOSITORY_NAME: 'lorem-list-api'
+      REPOSITORY_OWNER: 'flyingfishflash'
   gitlab:
-    type: "GITLAB"
+    type: 'GITLAB'
     options:
-      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}"
-      REPOSITORY_NAME: "lorem-list-api"
-      REPOSITORY_OWNER: "flyingfishflash"
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}'
+      REPOSITORY_NAME: 'lorem-list-api'
+      REPOSITORY_OWNER: 'flyingfishflash'
