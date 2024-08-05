@@ -1,8 +1,7 @@
 mat-sidenav-container {
-  height: 100%;
+  height: calc(100vh - 65px);
 }
 
-// Move the content down so that it won't be hidden by the toolbar
 mat-sidenav {
   min-width: 100px;
 
