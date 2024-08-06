@@ -1,13 +1,17 @@
 <div class="pure-g">
   <mat-toolbar>
     <div class="pure-u-1-2">
-      <button mat-icon-button aria-label="Menu icon" (click)="toggleMenu()">
+      <button mat-button aria-label="Menu icon" (click)="toggleMenu()">
         <mat-icon>menu</mat-icon>
       </button>
     </div>
     <div class="pure-u-1-2">
       <span style="float: right">
-        <button *ngIf="this.oidcUser" mat-button [matMenuTriggerFor]="menuUser">
+        <button
+          *ngIf="this.oidcUser"
+          mat-button
+          aria-label="User menu"
+          [matMenuTriggerFor]="menuUser">
           <mat-icon style="margin-right: 0.5rem">account_circle</mat-icon
           >{{ this.oidcUser().userData?.name }}
         </button>
@@ -19,8 +23,7 @@
   </mat-toolbar>
 </div>
 
-<!-- autosize is non-performant but leaves content to right after expanding sidenav, need to manually manage that -->
-<mat-sidenav-container autosize>
+<mat-sidenav-container [autosize]="isAutosize">
   <!-- *ngIf="authenticated().isAuthenticated" -->
   <mat-sidenav
     [mode]="isMobile ? 'over' : 'side'"

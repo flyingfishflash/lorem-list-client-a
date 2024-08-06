@@ -36,8 +36,9 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 export class AppComponent implements OnInit {
   @ViewChild(MatSidenav)
   sidenav!: MatSidenav;
-  isMobile = true;
+  isAutosize = false;
   isCollapsed = true;
+  isMobile = true;
 
   private readonly observer = inject(BreakpointObserver);
   private readonly router = inject(Router);
@@ -73,11 +74,13 @@ export class AppComponent implements OnInit {
   }
 
   toggleMenu() {
-    console.log('mobile?', this.isMobile);
     if (this.isMobile) {
+      this.isAutosize = false;
       this.sidenav.toggle();
-      this.isCollapsed = false; // On mobile, the menu can never be collapsed
+      this.isCollapsed = true; // On mobile, the menu is always collapsed
     } else {
+      this.isAutosize = true;
+      setTimeout(() => (this.isAutosize = false), 1);
       this.sidenav.open(); // On desktop/tablet, the menu can never be fully closed
       this.isCollapsed = !this.isCollapsed;
     }
