@@ -7,6 +7,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   Router,
   RouterLink,
@@ -25,6 +26,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
     MatMenuModule,
     MatSidenavModule,
     MatToolbarModule,
+    MatTooltipModule,
     NgIf,
     RouterOutlet,
     RouterLink,
@@ -60,30 +62,24 @@ export class AppComponent implements OnInit {
       .subscribe(({ isAuthenticated, accessToken }) => {
         console.log('app component: authenticated', isAuthenticated);
         console.log(`app component: current access token is '${accessToken}'`);
-
-        // if (!isAuthenticated) {
-        //   console.log('navigating to /login via app component')
-        //   this.router.navigateByUrl('/login')
-        // }
       });
-
-    // if (!this.authenticated().isAuthenticated) {
-    //   console.log('navigating to /login via app component')
-    //   this.router.navigateByUrl('/login')
-    // }
   }
 
   toggleMenu() {
     if (this.isMobile) {
       this.isAutosize = false;
       this.sidenav.toggle();
-      this.isCollapsed = true; // On mobile, the menu is always collapsed
+      this.isCollapsed = true;
     } else {
       this.isAutosize = true;
       setTimeout(() => (this.isAutosize = false), 1);
-      this.sidenav.open(); // On desktop/tablet, the menu can never be fully closed
+      this.sidenav.open();
       this.isCollapsed = !this.isCollapsed;
     }
+  }
+
+  isMatTooltipDisabled(): boolean {
+    return !this.isCollapsed;
   }
 
   logoutOidc() {

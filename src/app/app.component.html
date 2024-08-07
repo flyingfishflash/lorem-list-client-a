@@ -33,7 +33,10 @@
         [routerLink]="'/home'"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item>
+        mat-list-item
+        matTooltip="Home"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="isMatTooltipDisabled()">
         <span class="entry">
           <mat-icon>house</mat-icon>
           <span *ngIf="!isCollapsed">Home</span>
@@ -43,7 +46,10 @@
         [routerLink]="'/lists'"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item>
+        mat-list-item
+        matTooltip="Lists"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="isMatTooltipDisabled()">
         <span class="entry">
           <mat-icon>list</mat-icon>
           <span *ngIf="!isCollapsed">Lists</span>
@@ -53,28 +59,39 @@
         [routerLink]="'/items'"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item>
+        mat-list-item
+        matTooltip="Items"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="isMatTooltipDisabled()">
         <span class="entry">
           <mat-icon>check_box_outline_blank</mat-icon>
           <span *ngIf="!isCollapsed">Items</span>
         </span>
       </a>
       <a
+        *ngIf="!authenticated().isAuthenticated"
         [routerLink]="'/login'"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item>
+        mat-list-item
+        matTooltip="Log In"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="isMatTooltipDisabled()">
         <span class="entry">
           <mat-icon>login</mat-icon>
           <span *ngIf="!isCollapsed">Login</span>
         </span>
       </a>
       <a
+        *ngIf="authenticated().isAuthenticated"
         [routerLink]="'/logout'"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
         mat-list-item
-        (click)="logoutOidc()">
+        (click)="logoutOidc()"
+        matTooltip="Log Out"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="isMatTooltipDisabled()">
         <span class="entry">
           <mat-icon>logout</mat-icon>
           <span *ngIf="!isCollapsed">Logout</span>
