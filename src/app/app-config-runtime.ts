@@ -3,9 +3,7 @@ import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BuildProperties } from './app-build-properties';
-// import { Logger } from './core/logging/logger.service'
-
-// const log = new Logger('app-config-runtime')
+import { Logger } from './core/logging/logger.service';
 
 export interface IBuildProperties extends AppConfigRuntime {
   buildProperties: BuildProperties;
@@ -15,6 +13,8 @@ export interface IBuildProperties extends AppConfigRuntime {
 
 @Injectable()
 export class AppConfigRuntime implements IBuildProperties {
+  readonly #logger = new Logger('app-config-runtime');
+
   public buildProperties: BuildProperties = {
     artifact: 'default',
     ciPipelineId: '',
@@ -51,8 +51,8 @@ export class AppConfigRuntime implements IBuildProperties {
       errorMessage = `A server-side error occured:\nError Status: ${error.status}\nError Message: ${error.message}`;
     } else {
       errorMessage = 'An error of an unknown type occured:';
-      console.log(error);
+      this.#logger.error(error);
     }
-    console.log(errorMessage);
+    this.#logger.error(errorMessage);
   }
 }

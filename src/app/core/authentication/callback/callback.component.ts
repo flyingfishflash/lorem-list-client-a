@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Logger } from '../../logging/logger.service';
 
 @Component({
   selector: 'app-callback',
@@ -8,7 +9,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrl: './callback.component.scss',
 })
 export class CallbackComponent implements OnInit {
+  readonly #logger = new Logger('callback.component');
   ngOnInit(): void {
-    console.log('callback component: init');
+    this.#logger.debug('ngOnInit');
   }
 }

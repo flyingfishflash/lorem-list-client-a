@@ -15,6 +15,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { Logger } from './core/logging/logger.service';
 
 @Component({
   selector: 'app-root',
@@ -42,26 +43,29 @@ export class AppComponent implements OnInit {
   isCollapsed = true;
   isMobile = true;
 
-  private readonly observer = inject(BreakpointObserver);
-  private readonly router = inject(Router);
-  private readonly oidcSecurityService = inject(OidcSecurityService);
-  protected authenticated = this.oidcSecurityService.authenticated;
-  protected oidcUser = this.oidcSecurityService.userData;
+  readonly #breakpointObserver = inject(BreakpointObserver);
+  readonly #oidcSecurityService = inject(OidcSecurityService);
+  readonly #router = inject(Router);
+  readonly #logger = new Logger('app.component');
+  protected authenticated = this.#oidcSecurityService.authenticated;
+  protected oidcUser = this.#oidcSecurityService.userData;
 
   ngOnInit(): void {
-    this.observer.observe(['(max-width: 800px)']).subscribe((screenSize) => {
-      if (screenSize.matches) {
-        this.isMobile = true;
-      } else {
-        this.isMobile = false;
-      }
-    });
+    this.#breakpointObserver
+      .observe(['(max-width: 800px)'])
+      .subscribe((screenSize) => {
+        if (screenSize.matches) {
+          this.isMobile = true;
+        } else {
+          this.isMobile = false;
+        }
+      });
 
-    this.oidcSecurityService
+    this.#oidcSecurityService
       .checkAuth()
       .subscribe(({ isAuthenticated, accessToken }) => {
-        console.log('app component: authenticated', isAuthenticated);
-        console.log(`app component: current access token is '${accessToken}'`);
+        this.#logger.debug(`authenticated: ${isAuthenticated}`);
+        this.#logger.info(`access token: ${accessToken}`);
       });
   }
 
@@ -83,10 +87,10 @@ export class AppComponent implements OnInit {
   }
 
   logoutOidc() {
-    console.log('start logoff (oidc logoff()');
-    //this.oidcSecurityService.logoff().subscribe((result) => console.log(result))
-    this.oidcSecurityService.logoffLocal();
-    this.router.navigateByUrl('');
+    this.#logger.debug('start logoff (oidc logoff()');
+    //this.oidcSecurityService.logoff().subscribe((result) => this.#logger.debug(result))
+    this.#oidcSecurityService.logoffLocal();
+    this.#router.navigateByUrl('');
     location.reload();
   }
 }

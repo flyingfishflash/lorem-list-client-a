@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { BuildProperties } from '../../app-build-properties';
 import { AppConfigRuntime } from '../../app-config-runtime';
+import { Logger } from '../logging/logger.service';
 
 @Component({
   selector: 'app-home',
@@ -24,20 +25,21 @@ export class HomeComponent implements OnInit {
     version: 'default',
   };
 
-  private readonly oidcSecurityService = inject(OidcSecurityService);
-  private readonly appConfig = inject(AppConfigRuntime);
-  protected readonly userData = this.oidcSecurityService.userData;
-  protected readonly authenticated = this.oidcSecurityService.authenticated;
+  readonly #appConfig = inject(AppConfigRuntime);
+  readonly #oidcSecurityService = inject(OidcSecurityService);
+  readonly #logger = new Logger('home.component');
+  protected readonly userData = this.#oidcSecurityService.userData;
+  protected readonly authenticated = this.#oidcSecurityService.authenticated;
 
   constructor() {
-    if (this.appConfig.buildProperties) {
-      this.buildProperties = { ...this.appConfig.buildProperties };
+    if (this.#appConfig.buildProperties) {
+      this.buildProperties = { ...this.#appConfig.buildProperties };
     } else {
-      console.log('Build properties are not populated');
+      this.#logger.error('Build properties are not populated');
     }
   }
 
   ngOnInit(): void {
-    console.log('home component: init');
+    this.#logger.debug('ngOnInit');
   }
 }

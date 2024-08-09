@@ -79,6 +79,10 @@ const baseConfig = tseslint.config(
           prefix: ['is', 'should', 'has', 'can', 'did', 'will'],
         },
         {
+          selector: 'enumMember',
+          format: ['UPPER_CASE'],
+        },
+        {
           selector: 'property',
           format: ['strictCamelCase'],
           leadingUnderscore: 'allow',
