@@ -35,7 +35,7 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: MIN_LOG_LEVEL,
-      useValue: isDevMode() ? LogLevel.DEBUG : LogLevel.NEVER,
+      useValue: isDevMode() ? LogLevel.DEBUG : LogLevel.INFO,
     },
     provideHttpClient(withInterceptors([authInterceptor()])),
     provideAuth(authConfig),
