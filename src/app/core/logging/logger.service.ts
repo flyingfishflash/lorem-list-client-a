@@ -46,9 +46,10 @@ export class Logger {
     message: string,
     ...optionalParams: any[]
   ) {
-    let logEntry: string = `${new Date().toISOString()} | ${LogLevel[logLevel]} | ${this.#scope} | ${message}`;
-    if (optionalParams.length > 1) {
-      logEntry = `${new Date().toISOString()} | INFO | ${this.#scope} | ${message} | ${optionalParams}`;
+    let logLevelPadded = LogLevel[logLevel].padEnd(5);
+    let logEntry: string = `${new Date().toISOString()} | ${logLevelPadded} | ${this.#scope} | ${message}`;
+    if (optionalParams.length > 0 && optionalParams[0].length > 0) {
+      logEntry = `${logEntry} | ${optionalParams}`;
     }
     return logEntry;
   }
