@@ -1,5 +1,5 @@
 export enum LogLevel {
-  NEVER = Number.MAX_SAFE_INTEGER,
+  NEVER = 99,
   TRACE = 0,
   DEBUG = 1,
   INFO = 2,
