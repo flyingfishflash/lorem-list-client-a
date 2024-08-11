@@ -46,7 +46,7 @@ export class Logger {
     message: string,
     ...optionalParams: any[]
   ) {
-    let logLevelPadded = LogLevel[logLevel].padEnd(5);
+    const logLevelPadded = LogLevel[logLevel].padEnd(5);
     let logEntry: string = `${new Date().toISOString()} | ${logLevelPadded} | ${this.#scope} | ${message}`;
     if (optionalParams.length > 0 && optionalParams[0].length > 0) {
       logEntry = `${logEntry} | ${optionalParams}`;
