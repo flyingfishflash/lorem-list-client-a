@@ -1,6 +1,6 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { NgIf } from '@angular/common';
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, Signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -14,7 +14,11 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import {
+  AuthenticatedResult,
+  OidcSecurityService,
+  UserDataResult,
+} from 'angular-auth-oidc-client';
 import { Logger } from './core/logging/logger.service';
 
 @Component({
@@ -43,12 +47,17 @@ export class AppComponent implements OnInit {
   isCollapsed = true;
   isMobile = true;
 
+  protected readonly authenticated: Signal<AuthenticatedResult>;
+  protected readonly oidcUser: Signal<UserDataResult>;
   readonly #breakpointObserver = inject(BreakpointObserver);
+  readonly #logger = new Logger('app.component');
   readonly #oidcSecurityService = inject(OidcSecurityService);
   readonly #router = inject(Router);
-  readonly #logger = new Logger('app.component');
-  protected authenticated = this.#oidcSecurityService.authenticated;
-  protected oidcUser = this.#oidcSecurityService.userData;
+
+  constructor() {
+    this.authenticated = this.#oidcSecurityService.authenticated;
+    this.oidcUser = this.#oidcSecurityService.userData;
+  }
 
   ngOnInit(): void {
     this.#breakpointObserver

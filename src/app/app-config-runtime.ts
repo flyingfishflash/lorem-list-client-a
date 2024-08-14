@@ -13,8 +13,6 @@ export interface IBuildProperties extends AppConfigRuntime {
 
 @Injectable()
 export class AppConfigRuntime implements IBuildProperties {
-  readonly #logger = new Logger('app-config-runtime');
-
   public buildProperties: BuildProperties = {
     artifact: 'default',
     ciPipelineId: '',
@@ -25,6 +23,8 @@ export class AppConfigRuntime implements IBuildProperties {
     time: 'default',
     version: 'default',
   };
+
+  readonly #logger = new Logger('app-config-runtime');
 
   constructor(private readonly http: HttpClient) {}
 

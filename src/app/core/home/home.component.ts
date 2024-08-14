@@ -1,7 +1,11 @@
 import { DatePipe, JsonPipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import {
+  AuthenticatedResult,
+  OidcSecurityService,
+  UserDataResult,
+} from 'angular-auth-oidc-client';
 import { BuildProperties } from '../../app-build-properties';
 import { AppConfigRuntime } from '../../app-config-runtime';
 import { Logger } from '../logging/logger.service';
@@ -25,13 +29,16 @@ export class HomeComponent implements OnInit {
     version: 'default',
   };
 
+  protected readonly userData: Signal<UserDataResult>;
+  protected readonly authenticated: Signal<AuthenticatedResult>;
   readonly #appConfig = inject(AppConfigRuntime);
   readonly #oidcSecurityService = inject(OidcSecurityService);
   readonly #logger = new Logger('home.component');
-  protected readonly userData = this.#oidcSecurityService.userData;
-  protected readonly authenticated = this.#oidcSecurityService.authenticated;
 
   constructor() {
+    this.authenticated = this.#oidcSecurityService.authenticated;
+    this.userData = this.#oidcSecurityService.userData;
+
     if (this.#appConfig.buildProperties) {
       this.buildProperties = { ...this.#appConfig.buildProperties };
     } else {
