@@ -1,4 +1,8 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptors,
+} from '@angular/common/http';
 import {
   APP_INITIALIZER,
   ApplicationConfig,
@@ -10,7 +14,11 @@ import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
 } from '@angular/router';
-import { authInterceptor, provideAuth } from 'angular-auth-oidc-client';
+import {
+  AuthInterceptor,
+  authInterceptor,
+  provideAuth,
+} from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppConfigRuntime } from './app-config-runtime';
 import { routes } from './app.routes';
@@ -37,6 +45,7 @@ export const appConfig: ApplicationConfig = {
       provide: MIN_LOG_LEVEL,
       useValue: isDevMode() ? LogLevel.DEBUG : LogLevel.INFO,
     },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     provideHttpClient(withInterceptors([authInterceptor()])),
     provideAuth(authConfig),
     provideRouter(routes, withEnabledBlockingInitialNavigation()),
