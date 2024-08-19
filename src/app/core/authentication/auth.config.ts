@@ -1,5 +1,6 @@
 import { PassedInitialConfig } from 'angular-auth-oidc-client';
 import { environment } from '../../../environments/environment';
+import { DomainRoutes } from '../../domain/domain-config-routes';
 
 export const authConfig: PassedInitialConfig = {
   config: {
@@ -13,7 +14,11 @@ export const authConfig: PassedInitialConfig = {
     redirectUrl: window.location.origin + '/auth/callback',
     renewTimeBeforeTokenExpiresInSeconds: 30,
     responseType: 'code',
-    secureRoutes: [environment.api.server.url],
+    secureRoutes: [
+      environment.api.server.url + DomainRoutes.ITEMS,
+      environment.api.server.url + DomainRoutes.LISTS,
+      environment.api.server.url + '/maintenance',
+    ],
     scope: 'openid email profile offline_access' + ' ' + environment.oidc.scope,
     silentRenew: true,
     triggerAuthorizationResultEvent: false,

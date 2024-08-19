@@ -8,7 +8,10 @@ import {
 } from 'angular-auth-oidc-client';
 import { BuildProperties } from '../../app-build-properties';
 import { AppConfigRuntime } from '../../app-config-runtime';
+import { ItemsService } from '../../domain/items/items.service';
+import { ListsService } from '../../domain/lists/lists.service';
 import { Logger } from '../logging/logger.service';
+import { ManagementService } from '../management/management.service';
 
 @Component({
   selector: 'app-home',
@@ -32,10 +35,13 @@ export class HomeComponent implements OnInit {
   protected readonly userData: Signal<UserDataResult>;
   protected readonly authenticated: Signal<AuthenticatedResult>;
   readonly #appConfig = inject(AppConfigRuntime);
+  // readonly #listService = inject(ListsService);
+  readonly #managementService = inject(ManagementService);
   readonly #oidcSecurityService = inject(OidcSecurityService);
   readonly #logger = new Logger('home.component');
+  readonly #itemsService = inject(ItemsService);
 
-  constructor() {
+  constructor(private lsService: ListsService) {
     this.authenticated = this.#oidcSecurityService.authenticated;
     this.userData = this.#oidcSecurityService.userData;
 
@@ -48,5 +54,47 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.#logger.debug('ngOnInit');
+
+    this.#managementService.getHealthStatusSimple().subscribe({
+      next: (healthStatusSimple) => {
+        if (healthStatusSimple) {
+          this.#logger.debug('Api server health status is UP');
+        } else {
+          this.#logger.debug('Api server health status is not UP');
+        }
+      },
+      error: (error) => {
+        this.#logger.debug('health subscription' + error);
+        // this.handleError(error)
+      },
+    });
+
+    this.#managementService.getInfo().subscribe({
+      next: (info) => {
+        this.#logger.debug(info);
+        // this.#logger.debug(info);
+      },
+      error: (error) => {
+        this.#logger.debug('getLists subscription' + error);
+      },
+    });
+
+    this.lsService.getLists().subscribe({
+      next: (lists) => {
+        this.#logger.debug(lists);
+      },
+      error: (error) => {
+        this.#logger.debug('getLists subscription' + error);
+      },
+    });
+
+    this.#itemsService.getItems().subscribe({
+      next: (lists) => {
+        this.#logger.debug(lists);
+      },
+      error: (error) => {
+        this.#logger.debug('getItems subscription' + error);
+      },
+    });
   }
 }
