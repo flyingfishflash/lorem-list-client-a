@@ -32,16 +32,17 @@ export class HomeComponent implements OnInit {
     version: 'default',
   };
 
-  protected readonly userData: Signal<UserDataResult>;
   protected readonly authenticated: Signal<AuthenticatedResult>;
+  protected readonly userData: Signal<UserDataResult>;
   readonly #appConfig = inject(AppConfigRuntime);
-  // readonly #listService = inject(ListsService);
+  readonly #itemsService = inject(ItemsService);
+  readonly #listService = inject(ListsService);
   readonly #managementService = inject(ManagementService);
   readonly #oidcSecurityService = inject(OidcSecurityService);
-  readonly #logger = new Logger('home.component');
-  readonly #itemsService = inject(ItemsService);
 
-  constructor(private lsService: ListsService) {
+  readonly #logger = new Logger('home.component');
+
+  constructor() {
     this.authenticated = this.#oidcSecurityService.authenticated;
     this.userData = this.#oidcSecurityService.userData;
 
@@ -56,13 +57,13 @@ export class HomeComponent implements OnInit {
     this.#logger.debug('ngOnInit');
 
     this.#managementService.getHealthStatusSimple().subscribe({
-      next: (healthStatusSimple) => {
-        if (healthStatusSimple) {
-          this.#logger.debug('Api server health status is UP');
-        } else {
-          this.#logger.debug('Api server health status is not UP');
-        }
-      },
+      // next: (healthStatusSimple) => {
+      //   // if (healthStatusSimple) {
+      //   //   this.#logger.debug('Api server health status is UP');
+      //   // } else {
+      //   //   this.#logger.debug('Api server health status is not UP');
+      //   // }
+      // },
       error: (error) => {
         this.#logger.debug('health subscription' + error);
         // this.handleError(error)
@@ -70,28 +71,36 @@ export class HomeComponent implements OnInit {
     });
 
     this.#managementService.getInfo().subscribe({
-      next: (info) => {
-        this.#logger.debug(info);
-        // this.#logger.debug(info);
+      // next: (info) => {
+      //   this.#logger.debug(JSON.stringify(info))
+      // },
+      error: (error) => {
+        this.#logger.debug('getInfo subscription' + error);
       },
+    });
+
+    this.#listService.getLists().subscribe({
+      // next: (lists) => {
+      //   this.#logger.debug(lists);
+      // },
       error: (error) => {
         this.#logger.debug('getLists subscription' + error);
       },
     });
 
-    this.lsService.getLists().subscribe({
-      next: (lists) => {
-        this.#logger.debug(lists);
-      },
+    this.#listService.getPublicLists().subscribe({
+      // next: (lists) => {
+      //   this.#logger.debug(lists);
+      // },
       error: (error) => {
-        this.#logger.debug('getLists subscription' + error);
+        this.#logger.debug('getPublicLists subscription' + error);
       },
     });
 
     this.#itemsService.getItems().subscribe({
-      next: (lists) => {
-        this.#logger.debug(lists);
-      },
+      // next: (lists) => {
+      //   this.#logger.debug(lists);
+      // },
       error: (error) => {
         this.#logger.debug('getItems subscription' + error);
       },

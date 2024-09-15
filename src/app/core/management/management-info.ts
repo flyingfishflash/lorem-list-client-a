@@ -1,4 +1,4 @@
-export class ManagementInfo {
+export interface ManagementInfo {
   build:
     | {
         artifact: string;

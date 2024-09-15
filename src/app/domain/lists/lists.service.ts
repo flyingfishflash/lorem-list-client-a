@@ -17,7 +17,6 @@ export class ListsService {
 
   constructor(private http: HttpClient) {}
 
-  // private accountUrl = '/api/accounts/accounts.json';
 
   getLists(): Observable<any> {
     const httpParams = new HttpParams().set('includeItems', 'false');
@@ -33,6 +32,23 @@ export class ListsService {
         catchError(this.handleError),
       );
   }
+
+  getPublicLists(): Observable<any> {
+    const httpParams = new HttpParams().set('includeItems', 'false');
+
+    return this.http
+      .get<any>(`${environment.api.server.url}${DomainRoutes.PUBLIC_LISTS}`, {
+        params: httpParams,
+      })
+      .pipe(
+        map((res) => {
+          return res.content;
+        }),
+        catchError(this.handleError),
+      );
+  }
+
+
 
   //   getAccountCategories(): Observable<string[]> {
   //     return this.http
