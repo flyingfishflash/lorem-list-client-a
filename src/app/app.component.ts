@@ -1,13 +1,14 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
-import { NgIf } from '@angular/common';
-import { Component, inject, OnInit, Signal, ViewChild } from '@angular/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
 import {
   Router,
   RouterLink,
@@ -19,34 +20,30 @@ import {
   OidcSecurityService,
   UserDataResult,
 } from 'angular-auth-oidc-client';
+import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { Logger } from './core/logging/logger.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatListModule,
-    MatMenuModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    NgIf,
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  standalone: true,
+  imports: [
+    MatMenuModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    AsyncPipe,
+  ],
 })
-export class AppComponent implements OnInit {
-  @ViewChild(MatSidenav)
-  sidenav!: MatSidenav;
-  isAutosize = false;
-  isCollapsed = true;
-  isMobile = true;
-
+export class AppComponent {
   protected readonly authenticated: Signal<AuthenticatedResult>;
   protected readonly oidcUser: Signal<UserDataResult>;
   readonly #breakpointObserver = inject(BreakpointObserver);
@@ -60,16 +57,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.#breakpointObserver
-      .observe(['(max-width: 800px)'])
-      .subscribe((screenSize) => {
-        if (screenSize.matches) {
-          this.isMobile = true;
-        } else {
-          this.isMobile = false;
-        }
-      });
-
     this.#oidcSecurityService
       .checkAuth()
       .subscribe(({ isAuthenticated, accessToken }) => {
@@ -78,21 +65,15 @@ export class AppComponent implements OnInit {
       });
   }
 
-  toggleMenu() {
-    if (this.isMobile) {
-      this.isAutosize = false;
-      this.sidenav.toggle();
-      this.isCollapsed = true;
-    } else {
-      this.isAutosize = true;
-      setTimeout(() => (this.isAutosize = false), 1);
-      this.sidenav.open();
-      this.isCollapsed = !this.isCollapsed;
-    }
-  }
+  isHandset$: Observable<boolean> = this.#breakpointObserver
+    .observe(Breakpoints.Handset)
+    .pipe(
+      map((result) => result.matches),
+      shareReplay(),
+    );
 
   isMatTooltipDisabled(): boolean {
-    return !this.isCollapsed;
+    return false;
   }
 
   logoutOidc() {

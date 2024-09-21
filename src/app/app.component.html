@@ -1,33 +1,20 @@
-<div class="pure-g">
-  <mat-toolbar>
-    <div class="pure-u-1-2">
-      <button mat-button aria-label="Menu icon" (click)="toggleMenu()">
-        <mat-icon>menu</mat-icon>
-      </button>
-    </div>
-    <div class="pure-u-1-2">
-      <span style="float: right">
-        <button
-          *ngIf="this.oidcUser"
-          mat-button
-          aria-label="User menu"
-          [matMenuTriggerFor]="menuUser">
-          <mat-icon style="margin-right: 0.5rem">account_circle</mat-icon
-          >{{ this.oidcUser().userData?.name }}
-        </button>
-      </span>
-      <mat-menu #menuUser="matMenu">
-        <button mat-menu-item (click)="logoutOidc()">Sign Out</button>
-      </mat-menu>
-    </div>
-  </mat-toolbar>
-</div>
-
-<mat-sidenav-container [autosize]="isAutosize">
-  <!-- *ngIf="authenticated().isAuthenticated" -->
+<mat-sidenav-container class="sidenav-container">
   <mat-sidenav
-    [mode]="isMobile ? 'over' : 'side'"
-    [opened]="isMobile ? 'false' : 'true'">
+    #drawer
+    class="sidenav"
+    fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false">
+    <mat-toolbar>
+      <span>
+        <img
+          id="ledger-logo"
+          src="/assets/images/project-icon.png"
+          width="28"
+          height="28"
+          alt="ledger logo" /> </span
+    ></mat-toolbar>
     <mat-nav-list>
       <a
         [routerLink]="'/home'"
@@ -37,9 +24,8 @@
         matTooltip="Home"
         matTooltipPosition="right"
         [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span class="entry">
+        <span>
           <mat-icon>house</mat-icon>
-          <span *ngIf="!isCollapsed">Home</span>
         </span>
       </a>
       <a
@@ -50,9 +36,8 @@
         matTooltip="Lists"
         matTooltipPosition="right"
         [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span class="entry">
+        <span>
           <mat-icon>list</mat-icon>
-          <span *ngIf="!isCollapsed">Lists</span>
         </span>
       </a>
       <a
@@ -63,55 +48,69 @@
         matTooltip="Items"
         matTooltipPosition="right"
         [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span class="entry">
+        <span>
           <mat-icon>check_box_outline_blank</mat-icon>
-          <span *ngIf="!isCollapsed">Items</span>
         </span>
       </a>
-      <a
-        *ngIf="!authenticated().isAuthenticated"
-        [routerLink]="'/login'"
-        routerLinkActive
-        [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item
-        matTooltip="Log In"
-        matTooltipPosition="right"
-        [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span class="entry">
+      @if (!authenticated().isAuthenticated) {
+        <a
+          [routerLink]="'/login'"
+          routerLinkActive
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-list-item
+          matTooltip="Log In"
+          matTooltipPosition="right"
+          [matTooltipDisabled]="isMatTooltipDisabled()">
           <mat-icon>login</mat-icon>
-          <span *ngIf="!isCollapsed">Login</span>
-        </span>
-      </a>
-      <a
-        *ngIf="authenticated().isAuthenticated"
-        [routerLink]="'/logout'"
-        routerLinkActive
-        [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item
-        (click)="logoutOidc()"
-        matTooltip="Log Out"
-        matTooltipPosition="right"
-        [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span class="entry">
+        </a>
+      }
+      @if (authenticated().isAuthenticated) {
+        <a
+          [routerLink]="'/logout'"
+          routerLinkActive
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-list-item
+          (click)="logoutOidc()"
+          matTooltip="Log Out"
+          matTooltipPosition="right"
+          [matTooltipDisabled]="isMatTooltipDisabled()">
           <mat-icon>logout</mat-icon>
-          <span *ngIf="!isCollapsed">Logout</span>
-        </span>
-      </a>
+        </a>
+      }
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div class="pure-g">
-      <div
-        class="pure-u-1-24 pure-u-md-2-24 pure-u-lg-3-24 pure-u-xl-7-24"
-        id="content-layout-left"></div>
-      <div
-        class="pure-u-22-24 pure-u-md-20-24 pure-u-lg-18-24 pure-u-xl-10-24"
-        id="content-layout-center">
-        <router-outlet></router-outlet>
+    <mat-toolbar>
+      @if (isHandset$ | async) {
+        <button
+          type="button"
+          aria-label="Toggle sidenav"
+          mat-icon-button
+          (click)="drawer.toggle()">
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+      }
+      <div class="pure-g" style="width: 100%">
+        <div class="pure-u-1-2">
+          <!-- content (if any) to be determined -->
+        </div>
+        <div class="pure-u-1-2">
+          @if (authenticated().isAuthenticated) {
+            <button
+              style="float: right"
+              mat-button
+              aria-label="User menu"
+              [matMenuTriggerFor]="menuUser">
+              {{ this.oidcUser().userData?.name }}
+              <mat-icon iconPositionEnd>account_circle</mat-icon>
+            </button>
+          }
+          <mat-menu #menuUser="matMenu">
+            <button mat-menu-item (click)="logoutOidc()">Sign Out</button>
+          </mat-menu>
+        </div>
       </div>
-      <div
-        class="pure-u-1-24 pure-u-md-2-24 pure-u-lg-3-24 pure-u-xl-7-24"
-        id="content-layout-right"></div>
-    </div>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

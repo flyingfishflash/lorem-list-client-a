@@ -17,7 +17,6 @@ export class ListsService {
 
   constructor(private http: HttpClient) {}
 
-
   getLists(): Observable<any> {
     const httpParams = new HttpParams().set('includeItems', 'false');
 
@@ -47,8 +46,6 @@ export class ListsService {
         catchError(this.handleError),
       );
   }
-
-
 
   //   getAccountCategories(): Observable<string[]> {
   //     return this.http
