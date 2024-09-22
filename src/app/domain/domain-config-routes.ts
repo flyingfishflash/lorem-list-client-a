@@ -3,5 +3,5 @@ export const enum DomainRoutes {
   LISTS = '/lists',
   MANAGEMENT_HEALTH = '/management/health',
   MANAGEMENT_INFO = '/management/info',
-  PUBLIC_LISTS = '/public/lists'
+  PUBLIC_LISTS = '/public/lists',
 }
