@@ -1,11 +1,13 @@
 import { DatePipe, JsonPipe } from '@angular/common';
 import { Component, inject, OnInit, Signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import {
   AuthenticatedResult,
   OidcSecurityService,
   UserDataResult,
 } from 'angular-auth-oidc-client';
+import { environment } from '../../../environments/environment';
 import { BuildProperties } from '../../app-build-properties';
 import { AppConfigRuntime } from '../../app-config-runtime';
 import { ItemsService } from '../../domain/items/items.service';
@@ -16,7 +18,7 @@ import { ManagementService } from '../management/management.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [DatePipe, JsonPipe, MatCardModule],
+  imports: [DatePipe, JsonPipe, MatButtonModule, MatCardModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -32,6 +34,7 @@ export class HomeComponent implements OnInit {
     version: 'default',
   };
 
+  oidcName = '';
   protected readonly authenticated: Signal<AuthenticatedResult>;
   protected readonly userData: Signal<UserDataResult>;
   readonly #appConfig = inject(AppConfigRuntime);
@@ -46,10 +49,18 @@ export class HomeComponent implements OnInit {
     this.authenticated = this.#oidcSecurityService.authenticated;
     this.userData = this.#oidcSecurityService.userData;
 
+    // populate version and build information
     if (this.#appConfig.buildProperties) {
       this.buildProperties = { ...this.#appConfig.buildProperties };
     } else {
       this.#logger.error('Build properties are not populated');
+    }
+
+    // populate oidc name
+    if (environment.oidc.name !== '') {
+      this.oidcName = environment.oidc.name;
+    } else {
+      this.#logger.error('OIDC Name not available in environment');
     }
   }
 
@@ -105,5 +116,11 @@ export class HomeComponent implements OnInit {
         this.#logger.debug('getItems subscription' + error);
       },
     });
+  }
+
+  login() {
+    console.debug('login()');
+    console.debug('start login (oidc authorize()');
+    this.#oidcSecurityService.authorize();
   }
 }

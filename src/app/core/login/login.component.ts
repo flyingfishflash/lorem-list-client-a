@@ -1,4 +1,4 @@
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,7 +15,6 @@ import { BuildProperties } from '../../app-build-properties';
   imports: [
     MatCardModule,
     MatTabsModule,
-    NgIf,
     MatButtonModule,
     MatIconModule,
     MatGridListModule,
