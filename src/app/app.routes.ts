@@ -40,9 +40,4 @@ export const routes: Routes = [
       import('./domain/items/items.component').then((m) => m.ItemsComponent),
     canActivate: [isAuthenticatedGuard],
   },
-  {
-    path: 'login',
-    loadComponent: () =>
-      import('./core/login/login.component').then((m) => m.LoginComponent),
-  },
 ];

@@ -52,7 +52,7 @@
           <mat-icon>check_box_outline_blank</mat-icon>
         </span>
       </a>
-      @if (!authenticated().isAuthenticated) {
+      <!-- @if (!authenticated().isAuthenticated) {
         <a
           [routerLink]="'/login'"
           routerLinkActive
@@ -63,7 +63,7 @@
           [matTooltipDisabled]="isMatTooltipDisabled()">
           <mat-icon>login</mat-icon>
         </a>
-      }
+      } -->
       @if (authenticated().isAuthenticated) {
         <a
           [routerLink]="'/logout'"

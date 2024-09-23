@@ -10,7 +10,7 @@ export const authConfig: PassedInitialConfig = {
     historyCleanupOff: true,
     // logLevel: LogLevel.Debug,
     postLoginRoute: '/home',
-    postLogoutRedirectUri: window.location.origin + '/login',
+    postLogoutRedirectUri: window.location.origin + '/home',
     redirectUrl: window.location.origin + '/auth/callback',
     renewTimeBeforeTokenExpiresInSeconds: 30,
     responseType: 'code',
