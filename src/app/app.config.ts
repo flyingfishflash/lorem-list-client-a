@@ -23,6 +23,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { AppConfigRuntime } from './app-config-runtime';
 import { routes } from './app.routes';
 import { authConfig } from './core/authentication/auth.config';
+import { errorInterceptor } from './core/error-handling/http-error.interceptor';
 import { MIN_LOG_LEVEL } from './core/logging/logger.service';
 import { LogLevel } from './core/logging/loglevel.enum';
 
@@ -46,7 +47,7 @@ export const appConfig: ApplicationConfig = {
       useValue: isDevMode() ? LogLevel.DEBUG : LogLevel.INFO,
     },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    provideHttpClient(withInterceptors([authInterceptor()])),
+    provideHttpClient(withInterceptors([authInterceptor(), errorInterceptor])),
     provideAuth(authConfig),
     provideRouter(routes, withEnabledBlockingInitialNavigation()),
     provideZoneChangeDetection({ eventCoalescing: true }),

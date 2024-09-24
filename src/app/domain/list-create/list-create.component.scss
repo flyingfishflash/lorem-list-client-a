@@ -1,0 +1,13 @@
+.full-width {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.col {
+  flex: 1;
+  margin-right: 20px;
+}

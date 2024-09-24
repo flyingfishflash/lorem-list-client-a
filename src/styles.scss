@@ -5,7 +5,6 @@
 @include mat.core();
 
 // https://purecss.io/
-@import './style/pure-grids/base.css';
 @import './style/pure-grids/grids.css';
 @import './style/pure-grids/grids-responsive.css';
 
@@ -30,6 +29,40 @@ body {
   --mdc-text-button-container-shape: var(--sys-corner-extra-small);
   --mat-list-active-indicator-shape: var(--sys-corner-extra-small);
   --mat-sidenav-container-shape: var(--sys-corner-none);
+  --mdc-dialog-container-shape: var(--sys-corner-extra-small);
+}
+
+.logo-sm {
+  height: 1.2em;
+  width: 1.2em;
+}
+
+.logo-md {
+  height: 4em;
+  width: 4em;
+}
+
+.logo-lg {
+  height: 6em;
+  width: 6em;
+}
+
+.flex-top-center {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.default-form-card-container {
+  margin: 2em;
+}
+
+.default-card-header {
+  margin-bottom: 1em;
+}
+
+.default-card-actions {
+  margin-top: 1em;
 }
 
 // intended to style a mat-icon used as a form field suffix

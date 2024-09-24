@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { map, take } from 'rxjs/operators';
 import { CallbackComponent } from './core/authentication/callback/callback.component';
+import { DomainRoutes } from './domain/domain-config-routes';
 
 export const isAuthenticatedGuard = () => {
   const oidcSecurityService = inject(OidcSecurityService);
@@ -32,6 +33,14 @@ export const routes: Routes = [
     path: 'lists',
     loadComponent: () =>
       import('./domain/lists/lists.component').then((m) => m.ListsComponent),
+    canActivate: [isAuthenticatedGuard],
+  },
+  {
+    path: DomainRoutes.LIST_CREATE,
+    loadComponent: () =>
+      import('./domain/list-create/list-create.component').then(
+        (m) => m.ListCreateComponent,
+      ),
     canActivate: [isAuthenticatedGuard],
   },
   {

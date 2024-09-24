@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, Signal } from '@angular/core';
+import { Component, inject, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -43,7 +43,7 @@ import { Logger } from './core/logging/logger.service';
     AsyncPipe,
   ],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   protected readonly authenticated: Signal<AuthenticatedResult>;
   protected readonly oidcUser: Signal<UserDataResult>;
   readonly #breakpointObserver = inject(BreakpointObserver);
@@ -65,6 +65,7 @@ export class AppComponent {
       });
   }
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   isHandset$: Observable<boolean> = this.#breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(

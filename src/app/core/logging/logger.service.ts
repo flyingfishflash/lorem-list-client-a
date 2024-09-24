@@ -4,8 +4,7 @@ import { LogLevel } from './loglevel.enum';
 export const MIN_LOG_LEVEL = new InjectionToken<LogLevel>('Minimum log level');
 
 export class Logger {
-  #scope: string = 'default';
-
+  #scope: string;
   readonly #minLogLevel = inject(MIN_LOG_LEVEL) ?? LogLevel.NEVER;
 
   constructor(scope: string) {
@@ -13,44 +12,57 @@ export class Logger {
   }
 
   trace(message: string, ...optionalParams: any[]): void {
-    if (!this.#canLog(LogLevel.TRACE)) return;
-    console.trace(this.#buildLogEntry(LogLevel.TRACE, message, optionalParams));
+    this.#log(LogLevel.TRACE, message, ...optionalParams);
   }
 
   debug(message: string, ...optionalParams: any[]): void {
-    if (!this.#canLog(LogLevel.DEBUG)) return;
-    console.debug(this.#buildLogEntry(LogLevel.DEBUG, message, optionalParams));
+    this.#log(LogLevel.DEBUG, message, ...optionalParams);
   }
 
   info(message: string, ...optionalParams: any[]): void {
-    if (!this.#canLog(LogLevel.INFO)) return;
-    console.info(this.#buildLogEntry(LogLevel.INFO, message, optionalParams));
+    this.#log(LogLevel.INFO, message, ...optionalParams);
   }
 
   warn(message: string, ...optionalParams: any[]): void {
-    if (!this.#canLog(LogLevel.WARN)) return;
-    console.warn(this.#buildLogEntry(LogLevel.WARN, message, optionalParams));
+    this.#log(LogLevel.WARN, message, ...optionalParams);
   }
 
   error(message: string, ...optionalParams: any[]): void {
-    if (!this.#canLog(LogLevel.ERROR)) return;
-    console.warn(this.#buildLogEntry(LogLevel.ERROR, message, optionalParams));
+    this.#log(LogLevel.ERROR, message, ...optionalParams);
+  }
+
+  #log(logLevel: LogLevel, message: string, ...optionalParams: any[]): void {
+    if (!this.#canLog(logLevel)) return;
+
+    const msg = this.#buildLogEntry(logLevel, message);
+    const consoleMethod = this.#getConsoleMethod(logLevel);
+
+    consoleMethod(msg.concat('\n'), ...optionalParams);
   }
 
   #canLog(logLevel: LogLevel): boolean {
     return logLevel >= this.#minLogLevel;
   }
 
-  #buildLogEntry(
-    logLevel: LogLevel,
-    message: string,
-    ...optionalParams: any[]
-  ) {
+  #buildLogEntry(logLevel: LogLevel, message: string): string {
     const logLevelPadded = LogLevel[logLevel].padEnd(5);
-    let logEntry: string = `${new Date().toISOString()} | ${logLevelPadded} | ${this.#scope} | ${message}`;
-    if (optionalParams.length > 0 && optionalParams[0].length > 0) {
-      logEntry = `${logEntry} | ${optionalParams}`;
+    return `${new Date().toISOString()} | ${logLevelPadded} | ${this.#scope} | ${message}`;
+  }
+
+  #getConsoleMethod(logLevel: LogLevel): (...data: any[]) => void {
+    switch (logLevel) {
+      case LogLevel.TRACE:
+        return console.trace.bind(console);
+      case LogLevel.DEBUG:
+        return console.debug.bind(console);
+      case LogLevel.INFO:
+        return console.info.bind(console);
+      case LogLevel.WARN:
+        return console.warn.bind(console);
+      case LogLevel.ERROR:
+        return console.error.bind(console);
+      default:
+        return () => {};
     }
-    return logEntry;
   }
 }

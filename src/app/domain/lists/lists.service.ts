@@ -1,13 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-// import { ActivatedRoute, Router } from '@angular/router'
 import { catchError, map, Observable, throwError } from 'rxjs';
-// import { catchError, map } from 'rxjs/operators'
 import { environment } from '../../../environments/environment';
 import { Logger } from '../../core/logging/logger.service';
 import { DomainRoutes } from '../domain-config-routes';
-
-// const log = new Logger('account.service');
+import { ListCreateRequest } from './data/list-create-request';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +25,10 @@ export class ListsService {
         map((res) => {
           return res.content;
         }),
-        catchError(this.handleError),
+        catchError((err) => {
+          this.#logger.debug('getLists()', err);
+          return throwError(() => err);
+        }),
       );
   }
 
@@ -43,31 +43,28 @@ export class ListsService {
         map((res) => {
           return res.content;
         }),
-        catchError(this.handleError),
+        catchError((err) => {
+          this.#logger.debug('getPublicLists()', err);
+          return throwError(() => err);
+        }),
       );
   }
 
-  //   getAccountCategories(): Observable<string[]> {
-  //     return this.http
-  //       .get<any>(`${environment.api.server.url}/account-categories`)
-  //       .pipe(
-  //         map((res) => {
-  //           return res.content
-  //         }),
-  //         catchError(this.handleError),
-  //       )
-  //   }
+  postList(postData: ListCreateRequest): Observable<string> {
+    postData.name = postData.name.trim();
+    postData.description = postData.description?.trim() ?? null;
 
-  handleError(error: any) {
-    this.#logger.info('zzzzzz');
-    this.#logger.debug(`error: ${error}`);
-    let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `A client internal error occurred:\nError Message: ${error.error.message}`;
-    } else {
-      errorMessage = `A server-side error occured:\nError Status: ${error.status}\nError Message: ${error.message}`;
-    }
-    this.#logger.error(errorMessage);
-    return throwError(() => error);
+    return this.http
+      .post<any>(`${environment.api.server.url}${DomainRoutes.LISTS}`, postData)
+      .pipe(
+        map((response: any) => {
+          this.#logger.debug('api response: ', response);
+          return response.message;
+        }),
+        catchError((err) => {
+          this.#logger.debug('postList()', err);
+          return throwError(() => err);
+        }),
+      );
   }
 }

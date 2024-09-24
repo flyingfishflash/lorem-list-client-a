@@ -9,10 +9,8 @@
     <mat-toolbar>
       <span>
         <img
-          id="nav-lorem-list-logo"
+          class="logo-sm"
           src="/assets/images/project-icon.svg"
-          height="28"
-          width="28"
           alt="lorem list logo" /> </span
     ></mat-toolbar>
     <mat-nav-list>
@@ -41,6 +39,18 @@
         </span>
       </a>
       <a
+        [routerLink]="'/list-create'"
+        routerLinkActive
+        [routerLinkActiveOptions]="{ exact: true }"
+        mat-list-item
+        matTooltip="Create List"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="isMatTooltipDisabled()">
+        <span>
+          <mat-icon>playlist_add</mat-icon>
+        </span>
+      </a>
+      <a
         [routerLink]="'/items'"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
@@ -52,18 +62,6 @@
           <mat-icon>check_box_outline_blank</mat-icon>
         </span>
       </a>
-      <!-- @if (!authenticated().isAuthenticated) {
-        <a
-          [routerLink]="'/login'"
-          routerLinkActive
-          [routerLinkActiveOptions]="{ exact: true }"
-          mat-list-item
-          matTooltip="Log In"
-          matTooltipPosition="right"
-          [matTooltipDisabled]="isMatTooltipDisabled()">
-          <mat-icon>login</mat-icon>
-        </a>
-      } -->
       @if (authenticated().isAuthenticated) {
         <a
           [routerLink]="'/logout'"
@@ -90,15 +88,15 @@
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
       }
-      <div class="pure-g" style="width: 100%">
+      <div class="pure-g full-width">
         <div class="pure-u-1-2">
           <!-- content (if any) to be determined -->
         </div>
         <div class="pure-u-1-2">
           @if (authenticated().isAuthenticated) {
             <button
-              style="float: right"
               mat-button
+              id="user-indicator-button"
               aria-label="User menu"
               [matMenuTriggerFor]="menuUser">
               {{ this.oidcUser().userData?.name }}
@@ -111,6 +109,19 @@
         </div>
       </div>
     </mat-toolbar>
-    <router-outlet></router-outlet>
+
+    <div id="content-layout-parent" class="pure-g">
+      <div
+        id="content-layout-left"
+        class="pure-u-1-24 pure-u-md-2-24 pure-u-lg-3-24 pure-u-xl-7-24"></div>
+      <div
+        id="content-layout-center"
+        class="pure-u-22-24 pure-u-md-20-24 pure-u-lg-18-24 pure-u-xl-10-24">
+        <router-outlet></router-outlet>
+      </div>
+      <div
+        id="content-layout-right"
+        class="pure-u-1-24 pure-u-md-2-24 pure-u-lg-3-24 pure-u-xl-7-24"></div>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

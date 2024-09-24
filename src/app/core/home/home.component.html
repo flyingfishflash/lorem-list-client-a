@@ -1,58 +1,36 @@
-<div
-  style="display: flex; align-items: top; justify-content: center"
-  id="home container">
-  <div
-    id="primary-content"
-    style="box-sizing: border-box; margin: 0; max-width: 500px">
-    <mat-card appearance="outlined">
-      <mat-card-content>
-        <div id="app-information">
-          <img
-            id="lorem-list-logo"
-            style="width: 4em; height: 4em"
-            src="/assets/images/project-icon.svg"
-            alt="lorem list logo" />
-          <h2 class="mat-h2">Welcome to Lorem List</h2>
-          <h3 class="mat-h3" style="margin: 0.8rem">
-            {{ buildProperties.version }}
-          </h3>
-          @if (!authenticated().isAuthenticated) {
-            <div>
-              <button
-                class="color-token"
-                mat-flat-button
-                (click)="login()"
-                color="primary"
-                style="margin-top: 1rem; width: 100%">
-                Login with {{ oidcName }}
-              </button>
-            </div>
-          }
-          @if (authenticated().isAuthenticated) {
-            <div>
-              <button
-                mat-flat-button
-                (click)="login()"
-                color="primary"
-                style="margin-top: 1rem; width: 100%">
-                Create a List
-              </button>
-            </div>
-          }
-          <p class="mat-small" style="margin: 0.1rem">
-            {{ buildProperties.time | date: 'mediumDate' : 'UTC' }}
-          </p>
-          <p class="mat-small" style="margin: 0.1rem">
-            {{ buildProperties.time | date: 'longTime' : 'UTC' }}
-          </p>
-          <p class="mat-small" style="margin: 0.1rem">
-            <br />
-            {{ buildProperties.ciPlatform }} |
-            {{ buildProperties.ciPipelineId }} |
-            {{ buildProperties.commit }}
-          </p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+<div class="flex-top-center">
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <div id="app-information">
+        <img
+          class="logo-md"
+          src="/assets/images/project-icon.svg"
+          alt="lorem list logo" />
+        <h2 class="mat-h2">Welcome to Lorem List</h2>
+        <h3 id="version" class="mat-h3">{{ buildProperties.version }}</h3>
+        @if (!authenticated().isAuthenticated) {
+          <div>
+            <button mat-raised-button class="home-button" (click)="login()">
+              Login with {{ oidcName }}
+            </button>
+          </div>
+        } @else {
+          <div>
+            <button mat-raised-button class="home-button" (click)="login()">
+              Create a List
+            </button>
+            <button mat-raised-button class="home-button" (click)="login()">
+              Your Lists
+            </button>
+          </div>
+        }
+        <p id="build-info-wrapper" class="mat-small">
+          <br />
+          {{ buildProperties.ciPlatform }} |
+          {{ buildProperties.ciPipelineId }} |
+          {{ buildProperties.commit }}
+        </p>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

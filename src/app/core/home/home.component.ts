@@ -10,8 +10,8 @@ import {
 import { environment } from '../../../environments/environment';
 import { BuildProperties } from '../../app-build-properties';
 import { AppConfigRuntime } from '../../app-config-runtime';
-import { ItemsService } from '../../domain/items/items.service';
-import { ListsService } from '../../domain/lists/lists.service';
+// import { ItemsService } from '../../domain/items/items.service';
+// import { ListsService } from '../../domain/lists/lists.service';
 import { Logger } from '../logging/logger.service';
 import { ManagementService } from '../management/management.service';
 
@@ -38,8 +38,8 @@ export class HomeComponent implements OnInit {
   protected readonly authenticated: Signal<AuthenticatedResult>;
   protected readonly userData: Signal<UserDataResult>;
   readonly #appConfig = inject(AppConfigRuntime);
-  readonly #itemsService = inject(ItemsService);
-  readonly #listService = inject(ListsService);
+  // readonly #itemsService = inject(ItemsService);
+  // readonly #listService = inject(ListsService);
   readonly #managementService = inject(ManagementService);
   readonly #oidcSecurityService = inject(OidcSecurityService);
 
@@ -76,7 +76,7 @@ export class HomeComponent implements OnInit {
       //   // }
       // },
       error: (error) => {
-        this.#logger.debug('health subscription' + error);
+        this.#logger.debug('health subscription', error);
         // this.handleError(error)
       },
     });
@@ -86,36 +86,36 @@ export class HomeComponent implements OnInit {
       //   this.#logger.debug(JSON.stringify(info))
       // },
       error: (error) => {
-        this.#logger.debug('getInfo subscription' + error);
+        this.#logger.debug('getInfo subscription', error);
       },
     });
 
-    this.#listService.getLists().subscribe({
-      // next: (lists) => {
-      //   this.#logger.debug(lists);
-      // },
-      error: (error) => {
-        this.#logger.debug('getLists subscription' + error);
-      },
-    });
+    // this.#listService.getLists().subscribe({
+    //   // next: (lists) => {
+    //   //   this.#logger.debug(lists);
+    //   // },
+    //   error: (error) => {
+    //     this.#logger.debug('getLists subscription' + error);
+    //   },
+    // });
 
-    this.#listService.getPublicLists().subscribe({
-      // next: (lists) => {
-      //   this.#logger.debug(lists);
-      // },
-      error: (error) => {
-        this.#logger.debug('getPublicLists subscription' + error);
-      },
-    });
+    // this.#listService.getPublicLists().subscribe({
+    //   next: (lists) => {
+    //     this.#logger.debug('public lists: ', lists);
+    //   },
+    //   error: (error) => {
+    //     this.#logger.debug('getPublicLists subscription' + error);
+    //   },
+    // });
 
-    this.#itemsService.getItems().subscribe({
-      // next: (lists) => {
-      //   this.#logger.debug(lists);
-      // },
-      error: (error) => {
-        this.#logger.debug('getItems subscription' + error);
-      },
-    });
+    // this.#itemsService.getItems().subscribe({
+    //   // next: (lists) => {
+    //   //   this.#logger.debug(lists);
+    //   // },
+    //   error: (error) => {
+    //     this.#logger.debug('getItems subscription' + error);
+    //   },
+    // });
   }
 
   login() {
