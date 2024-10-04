@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Logger } from '../../core/logging/logger.service';
@@ -11,13 +11,12 @@ import { ListCreateRequest } from './data/list-create-request';
 })
 export class ListsService {
   readonly #logger = new Logger('lists.service');
-
-  constructor(private http: HttpClient) {}
+  readonly #http = inject(HttpClient);
 
   getLists(): Observable<any> {
     const httpParams = new HttpParams().set('includeItems', 'false');
 
-    return this.http
+    return this.#http
       .get<any>(`${environment.api.server.url}${DomainRoutes.LISTS}`, {
         params: httpParams,
       })
@@ -35,7 +34,7 @@ export class ListsService {
   getPublicLists(): Observable<any> {
     const httpParams = new HttpParams().set('includeItems', 'false');
 
-    return this.http
+    return this.#http
       .get<any>(`${environment.api.server.url}${DomainRoutes.PUBLIC_LISTS}`, {
         params: httpParams,
       })
@@ -54,7 +53,7 @@ export class ListsService {
     postData.name = postData.name.trim();
     postData.description = postData.description?.trim() ?? null;
 
-    return this.http
+    return this.#http
       .post<any>(`${environment.api.server.url}${DomainRoutes.LISTS}`, postData)
       .pipe(
         map((response: any) => {
