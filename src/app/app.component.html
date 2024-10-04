@@ -27,7 +27,7 @@
         </span>
       </a>
       <a
-        [routerLink]="'/lists'"
+        [routerLink]="domainRoutes.listsManage"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
         mat-list-item
@@ -40,7 +40,7 @@
         </span>
       </a>
       <a
-        [routerLink]="'/list-create'"
+        [routerLink]="domainRoutes.listCreate"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
         mat-list-item
@@ -52,7 +52,7 @@
         </span>
       </a>
       <a
-        [routerLink]="'/items'"
+        [routerLink]="domainRoutes.itemsManage"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
         mat-list-item
@@ -64,7 +64,7 @@
         </span>
       </a>
       <a
-        [routerLink]="'/item-create'"
+        [routerLink]="domainRoutes.itemCreate"
         routerLinkActive
         [routerLinkActiveOptions]="{ exact: true }"
         mat-list-item

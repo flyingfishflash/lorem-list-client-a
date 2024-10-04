@@ -1,12 +1,14 @@
-export const enum DomainRoutes {
-  // ui routes
-  ITEM_CREATE = 'item-create',
-  LIST_CREATE = 'list-create',
+export const domainRoutes = {
+  itemCreate: 'item-create',
+  itemsManage: 'items-manage',
+  listCreate: 'list-create',
+  listsManage: 'lists-manage',
+} as const;
 
-  // api endpoints
-  ITEMS = '/items',
-  LISTS = '/lists',
-  MANAGEMENT_HEALTH = '/management/health',
-  MANAGEMENT_INFO = '/management/info',
-  PUBLIC_LISTS = '/public/lists',
-}
+export const domainApiRoutes = {
+  items: '/items',
+  lists: '/lists',
+  managementHealth: '/management/health',
+  managementInfo: '/management/info',
+  publicLists: '/public/lists',
+} as const;

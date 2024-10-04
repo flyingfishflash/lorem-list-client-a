@@ -2,8 +2,8 @@ import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { map, take } from 'rxjs/operators';
-import { CallbackComponent } from './core/authentication/callback/callback.component';
-import { DomainRoutes } from './domain/domain-config-routes';
+import { AuthCallbackComponent } from './core/routes/auth-callback/auth-callback.component';
+import { domainRoutes } from './domain/domain-config-routes';
 
 export const isAuthenticatedGuard = () => {
   const oidcSecurityService = inject(OidcSecurityService);
@@ -23,36 +23,42 @@ export const isAuthenticatedGuard = () => {
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
-  { path: 'auth/callback', component: CallbackComponent },
+  { path: 'auth/callback', component: AuthCallbackComponent },
   {
     path: 'home',
     loadComponent: () =>
-      import('./core/home/home.component').then((m) => m.HomeComponent),
+      import('./domain/routes/home/home.component').then(
+        (m) => m.HomeComponent,
+      ),
   },
   {
-    path: 'lists',
+    path: domainRoutes.listsManage,
     loadComponent: () =>
-      import('./domain/lists/lists.component').then((m) => m.ListsComponent),
+      import('./domain/routes/lists-manage/lists-manage.component').then(
+        (m) => m.ListsManageComponent,
+      ),
     canActivate: [isAuthenticatedGuard],
   },
   {
-    path: DomainRoutes.LIST_CREATE,
+    path: domainRoutes.listCreate,
     loadComponent: () =>
-      import('./domain/list-create/list-create.component').then(
+      import('./domain/routes/list-create/list-create.component').then(
         (m) => m.ListCreateComponent,
       ),
     canActivate: [isAuthenticatedGuard],
   },
   {
-    path: 'items',
+    path: domainRoutes.itemsManage,
     loadComponent: () =>
-      import('./domain/items/items.component').then((m) => m.ItemsComponent),
+      import('./domain/routes/items-manage/items-manage.component').then(
+        (m) => m.ItemsManageComponent,
+      ),
     canActivate: [isAuthenticatedGuard],
   },
   {
-    path: DomainRoutes.ITEM_CREATE,
+    path: domainRoutes.itemCreate,
     loadComponent: () =>
-      import('./domain/item-create/item-create.component').then(
+      import('./domain/routes/item-create/item-create.component').then(
         (m) => m.ItemCreateComponent,
       ),
     canActivate: [isAuthenticatedGuard],

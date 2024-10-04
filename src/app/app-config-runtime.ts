@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BuildProperties } from './app-build-properties';
-import { Logger } from './core/logging/logger.service';
+import { Logger } from './core/shared/logging/logger';
 
 export interface IBuildProperties extends AppConfigRuntime {
   buildProperties: BuildProperties;

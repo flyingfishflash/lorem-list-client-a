@@ -22,10 +22,10 @@ import {
 import { Observable } from 'rxjs/internal/Observable';
 import { AppConfigRuntime } from './app-config-runtime';
 import { routes } from './app.routes';
-import { authConfig } from './core/authentication/auth.config';
-import { errorInterceptor } from './core/error-handling/http-error.interceptor';
-import { MIN_LOG_LEVEL } from './core/logging/logger.service';
-import { LogLevel } from './core/logging/loglevel.enum';
+import { authConfig } from './core/auth.config';
+import { errorInterceptor } from './core/interceptors/http-error.interceptor';
+import { LogLevel } from './core/model/loglevel.enum';
+import { MIN_LOG_LEVEL } from './core/shared/logging/logger';
 
 const appInitializerFn = (
   config: AppConfigRuntime,

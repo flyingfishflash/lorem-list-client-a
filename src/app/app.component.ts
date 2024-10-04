@@ -8,7 +8,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 import {
   Router,
   RouterLink,
@@ -22,7 +21,8 @@ import {
 } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { Logger } from './core/logging/logger.service';
+import { Logger } from './core/shared/logging/logger';
+import { domainRoutes } from './domain/domain-config-routes';
 
 @Component({
   selector: 'app-root',
@@ -45,6 +45,7 @@ import { Logger } from './core/logging/logger.service';
 })
 export class AppComponent implements OnInit {
   protected readonly authenticated: Signal<AuthenticatedResult>;
+  protected readonly domainRoutes = domainRoutes;
   protected readonly oidcUser: Signal<UserDataResult>;
   readonly #breakpointObserver = inject(BreakpointObserver);
   readonly #logger = new Logger('app.component');
