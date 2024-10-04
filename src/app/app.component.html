@@ -23,7 +23,7 @@
         matTooltipPosition="right"
         [matTooltipDisabled]="isMatTooltipDisabled()">
         <span>
-          <mat-icon>house</mat-icon>
+          <mat-icon>home</mat-icon>
         </span>
       </a>
       <a
@@ -35,7 +35,8 @@
         matTooltipPosition="right"
         [matTooltipDisabled]="isMatTooltipDisabled()">
         <span>
-          <mat-icon>list</mat-icon>
+          <mat-icon>folder</mat-icon>
+          <!-- <mat-icon>docs_add_on</mat-icon> -->
         </span>
       </a>
       <a
@@ -47,7 +48,7 @@
         matTooltipPosition="right"
         [matTooltipDisabled]="isMatTooltipDisabled()">
         <span>
-          <mat-icon>playlist_add</mat-icon>
+          <mat-icon>create_new_folder</mat-icon>
         </span>
       </a>
       <a
@@ -59,7 +60,19 @@
         matTooltipPosition="right"
         [matTooltipDisabled]="isMatTooltipDisabled()">
         <span>
-          <mat-icon>check_box_outline_blank</mat-icon>
+          <mat-icon>description</mat-icon>
+        </span>
+      </a>
+      <a
+        [routerLink]="'/item-create'"
+        routerLinkActive
+        [routerLinkActiveOptions]="{ exact: true }"
+        mat-list-item
+        matTooltip="Create Item"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="isMatTooltipDisabled()">
+        <span>
+          <mat-icon>note_add</mat-icon>
         </span>
       </a>
       @if (authenticated().isAuthenticated) {

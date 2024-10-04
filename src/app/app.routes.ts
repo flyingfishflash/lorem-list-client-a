@@ -49,4 +49,12 @@ export const routes: Routes = [
       import('./domain/items/items.component').then((m) => m.ItemsComponent),
     canActivate: [isAuthenticatedGuard],
   },
+  {
+    path: DomainRoutes.ITEM_CREATE,
+    loadComponent: () =>
+      import('./domain/item-create/item-create.component').then(
+        (m) => m.ItemCreateComponent,
+      ),
+    canActivate: [isAuthenticatedGuard],
+  },
 ];

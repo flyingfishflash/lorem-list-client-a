@@ -1,5 +1,6 @@
 export const enum DomainRoutes {
   // ui routes
+  ITEM_CREATE = 'item-create',
   LIST_CREATE = 'list-create',
 
   // api endpoints
