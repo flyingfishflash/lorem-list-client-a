@@ -53,25 +53,27 @@
             </div>
           }
         }
-        @if (authenticated().isAuthenticated) {
-          <div class="row">
-            <div class="col">
-              <button
-                mat-raised-button
-                class="home-button"
-                (click)="logoutOidc()">
-                Logout
-              </button>
+        @if (isHandset | async) {
+          @if (authenticated().isAuthenticated) {
+            <div class="row">
+              <div class="col">
+                <button
+                  mat-raised-button
+                  class="home-button"
+                  (click)="logoutOidc()">
+                  Logout
+                </button>
+              </div>
             </div>
-          </div>
-        } @else {
-          <div class="row">
-            <div class="col">
-              <button mat-raised-button class="home-button" (click)="login()">
-                Login with {{ oidcName }}
-              </button>
+          } @else {
+            <div class="row">
+              <div class="col">
+                <button mat-raised-button class="home-button" (click)="login()">
+                  Login with {{ oidcName }}
+                </button>
+              </div>
             </div>
-          </div>
+          }
         }
         <p id="build-info-wrapper" class="mat-small">
           <br />

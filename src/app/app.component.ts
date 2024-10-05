@@ -80,6 +80,12 @@ export class AppComponent implements OnInit {
     return false;
   }
 
+  loginOidc() {
+    console.debug('login()');
+    console.debug('start login (oidc authorize()');
+    this.#oidcSecurityService.authorize();
+  }
+
   logoutOidc() {
     this.#logger.debug('start logoff (oidc logoff()');
     //this.oidcSecurityService.logoff().subscribe((result) => this.#logger.debug(result))

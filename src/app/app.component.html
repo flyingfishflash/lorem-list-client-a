@@ -26,56 +26,56 @@
           <mat-icon>home</mat-icon>
         </span>
       </a>
-      <a
-        [routerLink]="domainRoutes.listsManage"
-        routerLinkActive
-        [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item
-        matTooltip="Manage Lists"
-        matTooltipPosition="right"
-        [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span>
-          <mat-icon>folder</mat-icon>
-          <!-- <mat-icon>docs_add_on</mat-icon> -->
-        </span>
-      </a>
-      <a
-        [routerLink]="domainRoutes.listCreate"
-        routerLinkActive
-        [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item
-        matTooltip="Create a List"
-        matTooltipPosition="right"
-        [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span>
-          <mat-icon>create_new_folder</mat-icon>
-        </span>
-      </a>
-      <a
-        [routerLink]="domainRoutes.itemsManage"
-        routerLinkActive
-        [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item
-        matTooltip="Manage Items"
-        matTooltipPosition="right"
-        [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span>
-          <mat-icon>description</mat-icon>
-        </span>
-      </a>
-      <a
-        [routerLink]="domainRoutes.itemCreate"
-        routerLinkActive
-        [routerLinkActiveOptions]="{ exact: true }"
-        mat-list-item
-        matTooltip="Create an Item"
-        matTooltipPosition="right"
-        [matTooltipDisabled]="isMatTooltipDisabled()">
-        <span>
-          <mat-icon>note_add</mat-icon>
-        </span>
-      </a>
       @if (authenticated().isAuthenticated) {
+        <a
+          [routerLink]="domainRoutes.listsManage"
+          routerLinkActive
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-list-item
+          matTooltip="Manage Lists"
+          matTooltipPosition="right"
+          [matTooltipDisabled]="isMatTooltipDisabled()">
+          <span>
+            <mat-icon>folder</mat-icon>
+            <!-- <mat-icon>docs_add_on</mat-icon> -->
+          </span>
+        </a>
+        <a
+          [routerLink]="domainRoutes.listCreate"
+          routerLinkActive
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-list-item
+          matTooltip="Create a List"
+          matTooltipPosition="right"
+          [matTooltipDisabled]="isMatTooltipDisabled()">
+          <span>
+            <mat-icon>create_new_folder</mat-icon>
+          </span>
+        </a>
+        <a
+          [routerLink]="domainRoutes.itemsManage"
+          routerLinkActive
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-list-item
+          matTooltip="Manage Items"
+          matTooltipPosition="right"
+          [matTooltipDisabled]="isMatTooltipDisabled()">
+          <span>
+            <mat-icon>description</mat-icon>
+          </span>
+        </a>
+        <a
+          [routerLink]="domainRoutes.itemCreate"
+          routerLinkActive
+          [routerLinkActiveOptions]="{ exact: true }"
+          mat-list-item
+          matTooltip="Create an Item"
+          matTooltipPosition="right"
+          [matTooltipDisabled]="isMatTooltipDisabled()">
+          <span>
+            <mat-icon>note_add</mat-icon>
+          </span>
+        </a>
         <a
           [routerLink]="'/logout'"
           routerLinkActive
@@ -86,6 +86,15 @@
           matTooltipPosition="right"
           [matTooltipDisabled]="isMatTooltipDisabled()">
           <mat-icon>logout</mat-icon>
+        </a>
+      } @else {
+        <a
+          mat-list-item
+          (click)="loginOidc()"
+          matTooltip="Log In"
+          matTooltipPosition="right"
+          [matTooltipDisabled]="isMatTooltipDisabled()">
+          <mat-icon>login</mat-icon>
         </a>
       }
     </mat-nav-list>
