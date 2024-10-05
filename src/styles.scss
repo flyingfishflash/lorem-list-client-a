@@ -7,6 +7,7 @@
 // https://purecss.io/
 @import './style/pure-grids/grids.css';
 @import './style/pure-grids/grids-responsive.css';
+@import 'material-symbols';
 
 :root {
   @include mat.all-component-themes(m3-theme.$light-theme);
@@ -30,7 +31,12 @@ body {
   --mat-list-active-indicator-shape: var(--sys-corner-extra-small);
   --mat-sidenav-container-shape: var(--sys-corner-none);
   --mdc-dialog-container-shape: var(--sys-corner-extra-small);
+  // --mat-app-background-color: #FAFAF9;
 }
+
+// .material-symbols-outlined {
+//   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+// }
 
 .logo-sm {
   height: 1.2em;
@@ -63,6 +69,20 @@ body {
 
 .default-card-actions {
   margin-top: 1em;
+}
+
+.default-small-button.mat-mdc-button {
+  padding: 0px;
+  min-width: 38px;
+  width: 36px;
+  height: 36px;
+}
+
+.default-small-button.mat-mdc-raised-button {
+  padding: 0px;
+  min-width: 38px;
+  width: 36px;
+  height: 36px;
 }
 
 // intended to style a mat-icon used as a form field suffix

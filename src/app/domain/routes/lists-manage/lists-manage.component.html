@@ -1,1 +1,239 @@
-<p>lists-manage works!</p>
+<mat-card>
+  <div class="default-form-card-container">
+    <mat-card-header class="default-card-header">
+      <mat-card-title>Manage Lists</mat-card-title>
+      <p></p>
+    </mat-card-header>
+    <mat-card-content style="border: 1px">
+      <mat-drawer-container class="list-manage-drawer-container">
+        <mat-drawer
+          mode="over"
+          position="end"
+          class="table-update-drawer"
+          [opened]="isListBeingEdited || isListBeingAdded"
+          disableClose="true">
+          <section>
+            <form
+              #formDirective="ngForm"
+              [formGroup]="editListForm"
+              (ngSubmit)="onCreateEditListSubmit()">
+              <header class="table-update__header">
+                <h2 class="h3">
+                  {{ isListBeingAdded ? 'Create' : 'Edit' }} List
+                </h2>
+              </header>
+
+              <div class="table-update__fields">
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field class="full-width">
+                      <input
+                        matInput
+                        placeholder="Name"
+                        formControlName="name" />
+                      @if (editListForm.controls['name'].hasError('required')) {
+                        <mat-error>List name is required.</mat-error>
+                      }
+                      @if (
+                        editListForm.controls['name'].hasError('maxlength')
+                      ) {
+                        <mat-error>
+                          List name must have no more than 64 characters.
+                        </mat-error>
+                      }
+                      @if (editListForm.controls['name'].hasError('pattern')) {
+                        <mat-error>
+                          List name must not consist only of whitespace
+                          characters.
+                        </mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6 full-width">
+                    <mat-form-field class="full-width">
+                      <textarea
+                        matInput
+                        placeholder="Description"
+                        formControlName="description">
+                      </textarea>
+                      @if (
+                        editListForm.controls['description'].hasError(
+                          'maxlength'
+                        )
+                      ) {
+                        <mat-error>
+                          List description must have no more than 2048
+                          characters.
+                        </mat-error>
+                      }
+                      @if (
+                        editListForm.controls['description'].hasError('pattern')
+                      ) {
+                        <mat-error>
+                          List description must not consist only of whitespace
+                          characters.
+                        </mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <footer>
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: left;
+                  ">
+                  <div>
+                    <button
+                      mat-raised-button
+                      class="button"
+                      type="button"
+                      (click)="onDismiss(formDirective)">
+                      Dismiss
+                    </button>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <!-- [disabled]="!editListForm.valid" -->
+                    <button mat-raised-button class="button" type="submit">
+                      Save
+                    </button>
+                    <!-- [disabled]="!table_update_form.valid" -->
+                  </div>
+                </div>
+              </footer>
+            </form>
+          </section>
+        </mat-drawer>
+
+        <mat-drawer-content>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding-right: 5px;
+            ">
+            <div>
+              <!-- class="default-small-button action-button-left" -->
+              <button
+                mat-raised-button
+                matTooltip="Create a List"
+                matTooltipPosition="below"
+                color="primary"
+                aria-label="Create a List"
+                (click)="onCreateList()">
+                Create
+                <!-- <i class="material-symbols-rounded">create_new_folder</i> -->
+              </button>
+              <!-- class="default-small-button action-button-right" -->
+              <button
+                mat-raised-button
+                matTooltip="Delete all of your Lists"
+                matTooltipPosition="below"
+                color="primary"
+                aria-label="Delete all of Your Lists"
+                (click)="noOp()">
+                Delete All
+                <!-- <i class="material-symbols-rounded">delete_sweep</i> -->
+              </button>
+            </div>
+            <mat-paginator
+              #paginator
+              [length]="dataSource.data.length"
+              [pageIndex]="0"
+              [hidePageSize]="true"
+              aria-label="Select page">
+            </mat-paginator>
+          </div>
+          <table
+            mat-table
+            matSort
+            matTableResponsive
+            [dataSource]="(dataSource$ | async) ?? []"
+            aria-label="Elements">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="public">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Public</th>
+              <td mat-cell *matCellDef="let row">{{ row.public | yesNo }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let row">{{ row.description }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="created">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.created | date: 'YYYY-MM-dd HH:mm:ss a z' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="updated">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Updated</th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.updated | date: 'YYYY-MM-dd HH:mm:ss a z' }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td mat-cell *matCellDef="let row">
+                <button
+                  mat-button
+                  matTooltip="Edit"
+                  matTooltipPosition="below"
+                  color="primary"
+                  class="default-small-button action-button-left"
+                  aria-label="Edit Row"
+                  (click)="onEditList(row)">
+                  <i class="material-symbols-rounded">info</i>
+                </button>
+                <button
+                  mat-button
+                  matTooltip="Toggle Shared"
+                  matTooltipPosition="below"
+                  color="primary"
+                  class="default-small-button"
+                  aria-label="Edit Row"
+                  (click)="onTogglePublicList(row)">
+                  <i class="material-symbols-rounded">lock</i>
+                </button>
+                <button
+                  mat-button
+                  matTooltip="Add/Remove Items"
+                  matTooltipPosition="below"
+                  color="primary"
+                  class="default-small-button"
+                  aria-label="Add/Remove Items"
+                  (click)="noOp()">
+                  <i class="material-symbols-rounded">settings</i>
+                </button>
+                <button
+                  mat-button
+                  matTooltip="Delete"
+                  matTooltipPosition="below"
+                  color="primary"
+                  class="default-small-button action-button-right"
+                  aria-label="Edit Row"
+                  (click)="onDeleteList(row)">
+                  <i class="material-symbols-rounded">delete</i>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </mat-drawer-content>
+      </mat-drawer-container>
+    </mat-card-content>
+  </div>
+</mat-card>

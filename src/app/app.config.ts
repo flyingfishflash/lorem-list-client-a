@@ -9,6 +9,7 @@ import {
   isDevMode,
   provideZoneChangeDetection,
 } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import {
   provideRouter,
@@ -41,6 +42,18 @@ export const appConfig: ApplicationConfig = {
       useFactory: appInitializerFn,
       deps: [AppConfigRuntime],
       multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: (iconRegistry: MatIconRegistry) => () => {
+        const defaultFontSetClasses = iconRegistry.getDefaultFontSetClass();
+        const outlinedFontSetClasses = defaultFontSetClasses
+          .filter((fontSetClass) => fontSetClass !== 'material-icons')
+          .concat(['material-symbols-rounded']);
+        iconRegistry.setDefaultFontSetClass(...outlinedFontSetClasses);
+      },
+      deps: [MatIconRegistry],
     },
     {
       provide: MIN_LOG_LEVEL,

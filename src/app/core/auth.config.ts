@@ -1,6 +1,6 @@
 import { PassedInitialConfig } from 'angular-auth-oidc-client';
 import { environment } from '../../environments/environment';
-import { domainRoutes } from '../domain/domain-config-routes';
+import { domainApiRoutes, domainRoutes } from '../domain/domain-config-routes';
 
 export const authConfig: PassedInitialConfig = {
   config: {
@@ -19,6 +19,7 @@ export const authConfig: PassedInitialConfig = {
       environment.api.server.url + domainRoutes.itemsManage,
       environment.api.server.url + domainRoutes.listCreate,
       environment.api.server.url + domainRoutes.listsManage,
+      environment.api.server.url + domainApiRoutes.lists,
       environment.api.server.url + '/maintenance',
     ],
     scope: 'openid email profile offline_access' + ' ' + environment.oidc.scope,

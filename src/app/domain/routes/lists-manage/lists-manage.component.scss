@@ -1,0 +1,101 @@
+.table-update-drawer {
+  width: 100%;
+}
+
+// .default-form-card-container {
+//   margin: 5px;
+// }
+
+.list-manage-drawer-container {
+  // set something here
+}
+
+.mat-drawer-content {
+  min-height: 400px;
+}
+
+.full-width-table,
+.home-button {
+  width: 100%;
+}
+
+.home-button {
+  margin-top: 1rem;
+}
+
+.default-small-button {
+  margin-left: 5px;
+}
+
+.default-small-button.action-button-left {
+  margin-left: 0;
+}
+
+.default-small-button.action-button-right {
+  margin-right: 0;
+}
+
+@media (max-width: 1280px) {
+  .mat-mdc-table[matTableResponsive] .mat-mdc-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    th.mat-mdc-header-cell {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      padding: 1rem 0.5rem;
+      justify-content: space-around;
+
+      &:not([mat-sort-header]),
+      &.mat-sort-header-disabled,
+      &.mat-column-actions {
+        display: none;
+      }
+
+      .mat-sort-header-container {
+        padding-left: 15px;
+      }
+    }
+  }
+
+  .mat-mdc-row {
+    td.mat-mdc-cell:not(.mat-column-actions) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      padding: 0.5rem;
+      text-align: right;
+      word-break: break-word;
+      border: none;
+      // border: 0.2rem solid aquamarine;
+
+      &:before {
+        content: attr(data-column-name);
+        text-align: left;
+      }
+    }
+
+    td.mat-column-actions {
+      display: flex;
+      justify-content: center;
+      padding: 0 0.5rem;
+      border: none;
+      min-height: 50px;
+
+      // more spacing between buttons on mobile
+      > .default-small-button {
+        margin-left: 1.5rem;
+      }
+    }
+  }
+
+  .mat-card,
+  .mat-expansion-panel {
+    .mat-table[matTableResponsive] {
+      border: 0.5rem solid red;
+    }
+  }
+}

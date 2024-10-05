@@ -17,7 +17,7 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "lib": ["ES2023", "dom"],
+    "lib": ["ES2023", "dom", "dom.iterable"],
     "module": "ES2022",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
