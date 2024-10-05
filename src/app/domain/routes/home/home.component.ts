@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { AsyncPipe, DatePipe, JsonPipe } from '@angular/common';
 import { Component, inject, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,13 +12,16 @@ import { BuildProperties } from '../../../app-build-properties';
 import { AppConfigRuntime } from '../../../app-config-runtime';
 // import { ItemsService } from '../../domain/items/items.service';
 // import { ListsService } from '../../domain/lists/lists.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Router } from '@angular/router';
+import { map, Observable, shareReplay } from 'rxjs';
 import { Logger } from '../../../core/shared/logging/logger';
 import { ManagementService } from '../../services/api/management.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [DatePipe, JsonPipe, MatButtonModule, MatCardModule],
+  imports: [AsyncPipe, DatePipe, JsonPipe, MatButtonModule, MatCardModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -38,12 +41,13 @@ export class HomeComponent implements OnInit {
   protected readonly authenticated: Signal<AuthenticatedResult>;
   protected readonly userData: Signal<UserDataResult>;
   readonly #appConfig = inject(AppConfigRuntime);
+  readonly #breakpointObserver = inject(BreakpointObserver);
   // readonly #itemsService = inject(ItemsService);
   // readonly #listService = inject(ListsService);
+  readonly #logger = new Logger('home.component');
   readonly #managementService = inject(ManagementService);
   readonly #oidcSecurityService = inject(OidcSecurityService);
-
-  readonly #logger = new Logger('home.component');
+  readonly #router = inject(Router);
 
   constructor() {
     this.authenticated = this.#oidcSecurityService.authenticated;
@@ -118,9 +122,27 @@ export class HomeComponent implements OnInit {
     // });
   }
 
+  noOp() {}
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  isHandset: Observable<boolean> = this.#breakpointObserver
+    .observe(Breakpoints.Handset)
+    .pipe(
+      map((result) => result.matches),
+      shareReplay(),
+    );
+
   login() {
     console.debug('login()');
     console.debug('start login (oidc authorize()');
     this.#oidcSecurityService.authorize();
+  }
+
+  logoutOidc() {
+    this.#logger.debug('start logoff (oidc logoff()');
+    //this.oidcSecurityService.logoff().subscribe((result) => this.#logger.debug(result))
+    this.#oidcSecurityService.logoffLocal();
+    this.#router.navigateByUrl('');
+    location.reload();
   }
 }

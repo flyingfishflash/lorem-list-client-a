@@ -8,20 +8,69 @@
           alt="lorem list logo" />
         <h2 class="mat-h2">Welcome to Lorem List</h2>
         <h3 id="version" class="mat-h3">{{ buildProperties.version }}</h3>
-        @if (!authenticated().isAuthenticated) {
-          <div>
-            <button mat-raised-button class="home-button" (click)="login()">
-              Login with {{ oidcName }}
+      </div>
+      <div id="app-menu">
+        <div class="row">
+          <div class="col">
+            <button mat-raised-button class="home-button" (click)="noOp()">
+              Public Lists
             </button>
           </div>
+        </div>
+        @if (isHandset | async) {
+          @if (authenticated().isAuthenticated) {
+            <div>
+              <div class="row">
+                <div class="col">
+                  <button
+                    mat-raised-button
+                    class="home-button"
+                    (click)="noOp()">
+                    Your Lists
+                  </button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <button
+                    mat-raised-button
+                    class="home-button"
+                    (click)="noOp()">
+                    Create a List
+                  </button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <button
+                    mat-raised-button
+                    class="home-button"
+                    (click)="noOp()">
+                    Create an Item
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        }
+        @if (authenticated().isAuthenticated) {
+          <div class="row">
+            <div class="col">
+              <button
+                mat-raised-button
+                class="home-button"
+                (click)="logoutOidc()">
+                Logout
+              </button>
+            </div>
+          </div>
         } @else {
-          <div>
-            <button mat-raised-button class="home-button" (click)="login()">
-              Create a List
-            </button>
-            <button mat-raised-button class="home-button" (click)="login()">
-              Your Lists
-            </button>
+          <div class="row">
+            <div class="col">
+              <button mat-raised-button class="home-button" (click)="login()">
+                Login with {{ oidcName }}
+              </button>
+            </div>
           </div>
         }
         <p id="build-info-wrapper" class="mat-small">
