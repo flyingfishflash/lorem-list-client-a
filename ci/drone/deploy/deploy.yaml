@@ -73,20 +73,20 @@
 
     - name: Remove Lorem-List-Client-A container quadlets
       ansible.builtin.file:
-        name: ~/.config/containers/systemd/{{ item }}.container
+        name: ~/.config/containers/systemd/{{ item }}/{{ item }}.container
         state: absent
       loop:
         - lorem-list-client-a-{{ region }}
 
     - name: Remove Lorem-List-Client-A network quadlets
       ansible.builtin.file:
-        name: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}.network
+        name: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}/lorem-list-client-a-{{ region }}.network
         state: absent
 
     - name: Push network quadlet lorem-list-client-a-{{ region }}
       ansible.builtin.copy:
         content: '[Network]'
-        dest: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}.network
+        dest: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}/lorem-list-client-a-{{ region }}.network
         mode: '0644'
         force: false
 
@@ -125,7 +125,7 @@
     - name: Push container quadlet
       ansible.builtin.template:
         src: quadlets/quadlet.container.j2
-        dest: ~/.config/containers/systemd/{{ quadlet.file_name }}
+        dest: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}/{{ quadlet.file_name }}
         mode: '0644'
 
     - name: Re-read systemd configuration
