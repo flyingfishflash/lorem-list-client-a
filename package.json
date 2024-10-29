@@ -21,7 +21,7 @@
     "@angular/platform-browser": "18.2.9",
     "@angular/platform-browser-dynamic": "18.2.9",
     "@angular/router": "18.2.9",
-    "angular-auth-oidc-client": "18.0.1",
+    "angular-auth-oidc-client": "^18.0.2",
     "material-symbols": "^0.25.1",
     "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.0.0",
