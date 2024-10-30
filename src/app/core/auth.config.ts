@@ -17,7 +17,6 @@ export const authConfig: PassedInitialConfig = {
     secureRoutes: [
       environment.api.server.url + domainRoutes.itemCreate,
       environment.api.server.url + domainRoutes.itemsManage,
-      environment.api.server.url + domainRoutes.listCreate,
       environment.api.server.url + domainRoutes.listsManage,
       environment.api.server.url + domainApiRoutes.lists,
       environment.api.server.url + '/maintenance',

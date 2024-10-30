@@ -2,24 +2,25 @@
   width: 100%;
 }
 
+.min-width-200px {
+  min-width: 200px;
+}
+
 // .default-form-card-container {
 //   margin: 5px;
 // }
 
-.list-manage-drawer-container {
-  // set something here
-}
-
 .mat-drawer-content {
   min-height: 400px;
+  background-color: inherit;
 }
 
-.full-width-table,
-.home-button {
+.full-width-table {
   width: 100%;
 }
 
 .home-button {
+  width: 100%;
   margin-top: 1rem;
 }
 
@@ -35,7 +36,15 @@
   margin-right: 0;
 }
 
-@media (max-width: 1280px) {
+.mat-mdc-table {
+  background-color: inherit;
+}
+
+.mat-mdc-card-content {
+  background: inherit;
+}
+
+@media (max-width: 1260px) {
   .mat-mdc-table[matTableResponsive] .mat-mdc-header-row {
     display: flex;
     flex-wrap: wrap;
@@ -81,7 +90,7 @@
     td.mat-column-actions {
       display: flex;
       justify-content: center;
-      padding: 0 0.5rem;
+      padding: 0.5rem;
       border: none;
       min-height: 50px;
 
@@ -98,4 +107,22 @@
       border: 0.5rem solid red;
     }
   }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.col {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.footer-button-container.isSmallerView {
+  display: flex; /* Enable Flexbox */
+  flex-direction: column; /* Align items in a column */
+  align-items: left; /* Center buttons horizontally */
+  // gap: 10px; /* Space between buttons */
+  // padding: 20px; /* Add padding around the container */
 }

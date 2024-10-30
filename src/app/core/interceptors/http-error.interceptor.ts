@@ -48,12 +48,12 @@ export function errorInterceptor(
                 break;
               }
             default:
-              errorDialogService.openDialog(
-                error.error.content.title ?? error.status,
-                error.error.content.detail ?? JSON.stringify(error),
-                error.status,
-                'Server Response Indicates an Error',
-              );
+              // errorDialogService.openDialog(
+              //   error.error.content.title ?? error.status,
+              //   error.error.content.detail ?? JSON.stringify(error),
+              //   error.status,
+              //   'Server Response Indicates an Error',
+              // );
               errorMessage = `HTTP error: ${error.status} - ${error.statusText}`;
           }
         }

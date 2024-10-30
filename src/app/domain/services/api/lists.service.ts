@@ -15,7 +15,15 @@ export class ListsService {
   readonly #logger = new Logger('lists.service');
   readonly #http = inject(HttpClient);
 
-  deleteList(
+  deleteEmptyList(id: string): Observable<LrmList[]> {
+    return this.#deleteList(id, false);
+  }
+
+  deleteListAndItemAssociations(id: string): Observable<LrmList[]> {
+    return this.#deleteList(id, true);
+  }
+
+  #deleteList(
     id: string,
     removeItemAssociations: boolean,
   ): Observable<LrmList[]> {
@@ -42,6 +50,21 @@ export class ListsService {
       );
   }
 
+  deleteLists(): Observable<any> {
+    return this.#http
+      .delete<any>(`${environment.api.server.url}${domainApiRoutes.lists}`)
+      .pipe(
+        map((apiResponse) => {
+          this.#logger.debug('deleteLists()', apiResponse);
+          return apiResponse.content;
+        }),
+        catchError((error) => {
+          this.#logger.debug('deleteLists()', error);
+          return throwError(() => error);
+        }),
+      );
+  }
+
   getLists(): Observable<LrmList[]> {
     const httpParams = new HttpParams().set('includeItems', 'false');
     return this.#http
@@ -55,6 +78,38 @@ export class ListsService {
         }),
         catchError((error) => {
           this.#logger.debug('getLists()', error);
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  getListsCount(): Observable<number> {
+    return this.#http
+      .get<any>(`${environment.api.server.url}${domainApiRoutes.listsCount}`)
+      .pipe(
+        map((apiResponse: any) => {
+          this.#logger.debug('getListsCount()', apiResponse);
+          return apiResponse.content.value;
+        }),
+        catchError((error) => {
+          this.#logger.debug('getListsCount()', error);
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  getListItemsCount(id: string): Observable<number> {
+    return this.#http
+      .get<any>(
+        `${environment.api.server.url}${domainApiRoutes.lists}/${id}/items/count`,
+      )
+      .pipe(
+        map((apiResponse: any) => {
+          this.#logger.debug('getListItemsCount()', apiResponse);
+          return apiResponse.content.value;
+        }),
+        catchError((error) => {
+          this.#logger.debug('getListItemsCount()', error);
           return throwError(() => error);
         }),
       );
