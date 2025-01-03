@@ -268,11 +268,12 @@ export class ListsManageComponent implements OnDestroy {
                   });
               }
             });
+        } else {
+          this.#logger.error('deleteEmptyList() error: ', error);
+          this.#snackBar.open('List not deleted due to an error.', 'OK', {
+            duration: 2500,
+          });
         }
-        this.#logger.error('deleteEmptyList() error: ', error);
-        this.#snackBar.open('List not deleted due to an error.', 'OK', {
-          duration: 2500,
-        });
       },
     });
   }
