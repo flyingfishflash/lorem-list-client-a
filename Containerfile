@@ -1,4 +1,5 @@
-FROM nginx:alpine
+# FROM nginx:alpine
+FROM registry.flyingfishflash.net/docker.io/nginx:alpine
 COPY ./container/docker-entrypoint-custom.sh /docker-entrypoint-custom.sh
 COPY ./container/lorem-list.nginx.conf.template /etc/nginx/templates/lorem-list.conf.template
 RUN rm -rf /usr/share/nginx/html/* && \
