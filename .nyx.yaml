@@ -29,22 +29,35 @@ git:
   remotes:
     lan:
       authenticationMethod: USER_PASSWORD
-      user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
-      password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
-#    codeberg:
-#      authenticationMethod: USER_PASSWORD
-#      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
-#      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
+      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
+      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
+    gitlab:
+      authenticationMethod: USER_PASSWORD
+      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}"
+      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}"
+    github:
+      authenticationMethod: USER_PASSWORD
+      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}"
+      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}"
+    codeberg:
+      authenticationMethod: USER_PASSWORD
+      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
+      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
 releaseTypes:
   enabled:
     - mainline
     - release
     - internal
   publicationServices:
+    - gitlab
+    - github
     - lan
-    - codeberg
+    # - codeberg
   remoteRepositories:
+    - gitlab
+    - github
     - lan
+    # - codeberg
   items:
     mainline:
       collapseVersions: false
@@ -55,7 +68,7 @@ releaseTypes:
       gitTag: 'false'
       matchBranches: '^main$'
       matchEnvironmentVariables:
-        CI: '^true$'
+        CI: '^true$'      
       matchWorkspaceStatus: 'CLEAN'
       publish: 'false'
     release:
@@ -67,7 +80,7 @@ releaseTypes:
       gitTag: 'true'
       matchBranches: '^release$'
       matchEnvironmentVariables:
-        CI: '^true$'
+        CI: "^(true|woodpecker)$"
       matchWorkspaceStatus: 'CLEAN'
       publish: 'true'
     internal:
@@ -81,28 +94,28 @@ releaseTypes:
           value: '{{#sanitize}}{{#environmentVariable}}DRONE_BUILD_NUMBER{{/environmentVariable}}{{/sanitize}}'
 services:
   codeberg:
-    type: 'GITHUB'
+    type: "GITHUB"
     options:
-      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
-      BASE_URI: 'https://codeberg.org/api/v1'
-      REPOSITORY_NAME: 'lorem-list-client-a'
-      REPOSITORY_OWNER: 'lorem-list'
+      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
+      BASE_URI: "https://codeberg.org/api/v1"
+      REPOSITORY_NAME: "lorem-list-client-a"
+      REPOSITORY_OWNER: "lorem-list"
   lan:
-    type: 'GITHUB'
+    type: "GITHUB"
     options:
-      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
-      BASE_URI: 'https://forgejo.flyingfishflash.net/api/v1'
-      REPOSITORY_NAME: 'lorem-list-client-a'
-      REPOSITORY_OWNER: 'lorem-list'
-  # github:
-  #   type: 'GITHUB'
-  #   options:
-  #     AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}'
-  #     REPOSITORY_NAME: 'lorem-list-client-a'
-  #     REPOSITORY_OWNER: 'flyingfishflash'
-  # gitlab:
-  #   type: 'GITLAB'
-  #   options:
-  #     AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}'
-  #     REPOSITORY_NAME: 'lorem-list-client-a'
-  #     REPOSITORY_OWNER: 'flyingfishflash'
+      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
+      BASE_URI: "https://forgejo.flyingfishflash.net/api/v1"
+      REPOSITORY_NAME: "lorem-list-client-a"
+      REPOSITORY_OWNER: "lorem-list"
+  github:
+    type: "GITHUB"
+    options:
+      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}"
+      REPOSITORY_NAME: "lorem-list-client-a"
+      REPOSITORY_OWNER: "flyingfishflash"
+  gitlab:
+    type: "GITLAB"
+    options:
+      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}"
+      REPOSITORY_NAME: "lorem-list-client-a"
+      REPOSITORY_OWNER: "flyingfishflash"
