@@ -3,18 +3,7 @@ when:
     - push
     - manual
   branch:
-    - build-*
-    - ci-*
-    - dependencies
-    - dependency-*
-    - dependency
-    - feature-*
-    - fix-*
-    - perf-*
-    - refactor-*
-    - release
-    - style-*
-    - test-*
+    exclude: main
 
 depends_on:
   - publish-image
