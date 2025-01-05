@@ -2,20 +2,6 @@ when:
   event:
     - manual
     - push
-  branch:
-    - build-*
-    - ci-*
-    - dependencies
-    - dependency-*
-    - dependency
-    - feature-*
-    - fix-*
-    - main
-    - perf-*
-    - refactor-*
-    - release
-    - style-*
-    - test-*
 
 depends_on:
   - check-secrets
