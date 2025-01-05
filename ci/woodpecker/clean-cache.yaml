@@ -2,7 +2,8 @@ when:
   event:
     - push
     - manual
-  ref: refs/heads/*
+  branch:
+    exclude: main
 
 depends_on:
   - deploy
