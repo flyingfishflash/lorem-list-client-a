@@ -1,7 +1,7 @@
 when:
   event:
-    - push
     - manual
+    - push
   branch:
     - build-*
     - ci-*

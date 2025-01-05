@@ -1,13 +1,11 @@
 when:
   event:
-    - push
     - manual
+    - push
   branch:
     - build-*
     - ci-*
     - dependencies
-    - dependency-*
-    - dependency
     - feature-*
     - fix-*
     - main
