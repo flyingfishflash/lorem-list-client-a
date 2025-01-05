@@ -2,8 +2,6 @@ when:
   event:
     - manual
     - push
-  branch:
-    exclude: main
 
 depends_on:
   - deploy
