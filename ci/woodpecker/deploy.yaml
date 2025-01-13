@@ -24,9 +24,9 @@ steps:
     image: registry.flyingfishflash.net/docker.io/alpine:latest
     commands:
       - *export_cache_volume_deploy
-      - cp -v $CACHE_DEPLOY/variables.yaml ci/drone/deploy/
-      - cp -v $CACHE_DEPLOY/inventory ci/drone/deploy/
-      - ls -l ci/drone/deploy/
+      - cp -v $CACHE_DEPLOY/variables.yaml ci/scripts/deploy/
+      - cp -v $CACHE_DEPLOY/inventory ci/scripts/deploy/
+      - ls -l ci/scripts/deploy/
     volumes:
       - *cache_volume
 
@@ -36,9 +36,9 @@ steps:
       - restore playbook files from cache
     settings:
       extra_vars: 'region=dev'
-      galaxy: ci/drone/deploy/requirements.yaml
-      inventory: ci/drone/deploy/inventory
-      playbook: ci/drone/deploy/deploy.yaml
+      galaxy: ci/scripts/deploy/requirements.yaml
+      inventory: ci/scripts/deploy/inventory
+      playbook: ci/scripts/deploy/deploy.yaml
       private_key:
         from_secret: deployer_ssh_key_private
       ssh-extra-args: '-o StrictHostKeyChecking=no'        
@@ -54,9 +54,9 @@ steps:
       - restore playbook files from cache
     settings:
       extra_vars: 'region=prd'
-      galaxy: ci/drone/deploy/requirements.yaml
-      inventory: ci/drone/deploy/inventory
-      playbook: ci/drone/deploy/deploy.yaml
+      galaxy: ci/scripts/deploy/requirements.yaml
+      inventory: ci/scripts/deploy/inventory
+      playbook: ci/scripts/deploy/deploy.yaml
       private_key:
         from_secret: deployer_ssh_key_private
       ssh-extra-args: '-o StrictHostKeyChecking=no'        

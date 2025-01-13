@@ -71,6 +71,12 @@
       loop:
         - lorem-list-client-a-{{ region }}
 
+    - name: Stop lorem-list-client-a-{{ region }}-network service
+      ansible.builtin.systemd:
+        name: lorem-list-client-a-{{ region }}-network
+        state: stopped
+        scope: user
+
     - name: Remove Lorem-List-Client-A container quadlets
       ansible.builtin.file:
         name: ~/.config/containers/systemd/{{ item }}/{{ item }}.container
@@ -90,43 +96,41 @@
         mode: '0644'
         force: false
 
-    - name: Define quadlet lorem-list-client-a{{ region }}
-      ansible.builtin.set_fact:
-        quadlet_lorem_list_client_a:
-          service_name: lorem-list-client-a-{{ region }}
-          file_name: lorem-list-client-a-{{ region }}.container
-          unit_description: 'lorem-list-client-a [{{ region }}]'
-          unit_start_limit_interval_sec: 175
-          unit_start_limit_burst: 5
-          container_environment:
-            - UPSTREAM_SERVER: lorem-list-api-{{ region }}.flyingfishflash.net
-            - API_SERVER_URL: https://lorem-list-api-{{ region }}.flyingfishflash.net/api/v1
-            - OIDC_NAME: '{{ oidc_name }}'
-            - OIDC_ENDPOINT: '{{ oidc_endpoint }}'
-            - OIDC_CLIENT_ID: '{{ oidc_client_id }}'
-            - OIDC_SCOPE: '{{ oidc_scope }}'
-            - OIDC_ROLE_CLAIM: '{{ oidc_role_claim }}'
-            - OIDC_USERNAME_CLAIM: '{{ oidc_username_claim }}'
-          container_image: '{{ registry_url }}/lorem-list-client-a:{{ tag }}'
-          container_log_driver: journald
-          container_container_name: lorem-list-client-a-{{ region }}
-          container_network: lorem-list-client-a-{{ region }}.network
-          container_podman_args:
-            - '--log-opt "tag=podman/lorem-list-client-a-{{ region }}"'
-          container_publish_port: '{{ published_ports_client }}'
-          service_restart: on-failure
-          service_restart_sec: 35
-          install_wanted_by: default.target
+    - name: Deploy quadlet lorem-list-client-a{{ region }}
+      containers.podman.podman_container:
+        name: lorem-list-client-a{{ region }}
+        image: "{{ registry_url }}/lorem-list-client-a:{{ tag }}"
+        log_driver: journald
+        network:
+          - lorem-list-client-a-{{ region }}.network
+        ports: "{{ published_ports_client }}"
+        env:
+          UPSTREAM_SERVER: lorem-list-api-{{ region }}.flyingfishflash.net
+          API_SERVER_URL: https://lorem-list-api-{{ region }}.flyingfishflash.net/api/v1
+          OIDC_NAME: '{{ oidc_name }}'
+          OIDC_ENDPOINT: '{{ oidc_endpoint }}'
+          OIDC_CLIENT_ID: '{{ oidc_client_id }}'
+          OIDC_SCOPE: '{{ oidc_scope }}'
+          OIDC_ROLE_CLAIM: '{{ oidc_role_claim }}'
+          OIDC_USERNAME_CLAIM: '{{ oidc_username_claim }}'
+        state: quadlet
+        quadlet_dir: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}/
+        quadlet_filename: lorem-list-client-a-{{ region }}
+        quadlet_file_mode: '0644'
+        quadlet_options:
+          - |+
 
-    - name: Define quadlet
-      ansible.builtin.set_fact:
-        quadlet: '{{ quadlet_lorem_list_client_a }}'
+            [Unit]
+            Description=lorem-list-client-a{{ region }}
+            StartLimitBurst=5
+            StartLimitIntervalSec=175
 
-    - name: Push container quadlet
-      ansible.builtin.template:
-        src: quadlets/quadlet.container.j2
-        dest: ~/.config/containers/systemd/lorem-list-client-a-{{ region }}/{{ quadlet.file_name }}
-        mode: '0644'
+            [Service]
+            Restart=on-failure
+            RestartSec=35
+
+            [Install]
+            WantedBy=default.target
 
     - name: Re-read systemd configuration
       ansible.builtin.systemd:
@@ -138,6 +142,12 @@
         name: registry.flyingfishflash.net/lorem-list/lorem-list-client-a
         force: true
         tag: '{{ tag }}'
+
+    - name: Start lorem-list-client-a-{{ region }}-network
+      ansible.builtin.systemd:
+        name: lorem-list-client-a-{{ region }}-network
+        state: restarted
+        scope: user
 
     - name: Start lorem-list-client-a-{{ region }}
       ansible.builtin.systemd:
