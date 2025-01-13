@@ -98,7 +98,7 @@
 
     - name: Deploy quadlet lorem-list-client-a{{ region }}
       containers.podman.podman_container:
-        name: lorem-list-client-a{{ region }}
+        name: lorem-list-client-a-{{ region }}
         image: "{{ registry_url }}/lorem-list-client-a:{{ tag }}"
         log_driver: journald
         network:
