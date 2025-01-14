@@ -3,7 +3,6 @@ import { Logger } from '../../shared/logging/logger';
 
 @Component({
   selector: 'app-callback',
-  standalone: true,
   imports: [],
   templateUrl: './auth-callback.component.html',
   styleUrl: './auth-callback.component.scss',

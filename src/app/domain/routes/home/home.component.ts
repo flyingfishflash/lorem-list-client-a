@@ -20,7 +20,6 @@ import { ManagementService } from '../../services/api/management.service';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
   imports: [AsyncPipe, DatePipe, JsonPipe, MatButtonModule, MatCardModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',

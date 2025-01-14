@@ -10,7 +10,6 @@ import {
 
 @Component({
   selector: 'app-dialog-general',
-  standalone: true,
   imports: [
     MatDialogActions,
     MatDialogClose,

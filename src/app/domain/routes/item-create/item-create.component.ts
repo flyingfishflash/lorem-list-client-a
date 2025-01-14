@@ -20,7 +20,6 @@ import { ItemsService } from '../../services/api/items.service';
 
 @Component({
   selector: 'app-item-create',
-  standalone: true,
   imports: [
     MatInputModule,
     MatButtonModule,

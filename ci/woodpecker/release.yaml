@@ -25,7 +25,7 @@ steps:
       NYX_FLYINGFISHFLASH_TOKEN_CODEBERG:
         from_secret: nyx_flyingfishflash_token_codeberg
       NYX_FLYINGFISHFLASH_TOKEN_GITLAB:
-       from_secret: nyx_flyingfishflash_token_gitlab
+        from_secret: nyx_flyingfishflash_token_gitlab
       NYX_FLYINGFISHFLASH_TOKEN_LAN:
         from_secret: nyx_flyingfishflash_token_lan
       NYX_FLYINGFISHFLASH_TOKEN_GITHUB:
@@ -40,5 +40,5 @@ steps:
       - mkdir ./build
       - nyx publish --dry-run=false
       - cat ./build/CHANGELOG.md
-    volumes: 
+    volumes:
       - *cache_volume

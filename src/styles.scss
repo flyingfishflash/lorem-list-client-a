@@ -2,7 +2,8 @@
 @use './style/theme/m3-theme.scss';
 // @use 'styles/theme/mixins/future-component.theme';
 
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 // https://purecss.io/
 @import './style/pure-grids/grids.css';
@@ -13,7 +14,7 @@
   @include mat.all-component-themes(m3-theme.$light-theme);
   @include mat.system-level-colors(m3-theme.$light-theme);
   @include mat.system-level-elevation(m3-theme.$light-theme);
-  @include mat.system-level-motion(m3-theme.$light-theme);
+  // @include mat.system-level-motion(m3-theme.$light-theme);
   @include mat.system-level-shape(m3-theme.$light-theme);
   @include mat.system-level-state(m3-theme.$light-theme);
   @include mat.system-level-typography(m3-theme.$light-theme);
@@ -24,13 +25,13 @@ body {
   height: 100%;
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-  --mdc-filled-button-container-shape: var(--sys-corner-extra-small);
-  --mdc-outlined-button-container-shape: var(--sys-corner-extra-small);
-  --mdc-protected-button-container-shape: var(--sys-corner-extra-small);
-  --mdc-text-button-container-shape: var(--sys-corner-extra-small);
-  --mat-list-active-indicator-shape: var(--sys-corner-extra-small);
-  --mat-sidenav-container-shape: var(--sys-corner-none);
-  --mdc-dialog-container-shape: var(--sys-corner-extra-small);
+  --mdc-filled-button-container-shape: var(--mat-sys-corner-extra-small);
+  --mdc-outlined-button-container-shape: var(--mat-sys-corner-extra-small);
+  --mdc-protected-button-container-shape: var(--mat-sys-corner-extra-small);
+  --mdc-text-button-container-shape: var(--mat-sys-corner-extra-small);
+  --mat-list-active-indicator-shape: var(--mat-sys-corner-extra-small);
+  --mat-sidenav-container-shape: var(--mat-sys-corner-none);
+  --mdc-dialog-container-shape: var(--mat-sys-corner-extra-small);
   // --mat-app-background-color: #FAFAF9;
 }
 

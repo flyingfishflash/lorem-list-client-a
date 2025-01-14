@@ -33,7 +33,7 @@ steps:
       - source .build
       - env | awk -v s="BUILD_" 'index($0, s) == 1' | LC_ALL=C sort
       - mkdir -pv $BUILD_NPM_CACHE
-      - mkdir -pv $BUILD_DIST    
+      - mkdir -pv $BUILD_DIST
       - |
         export JSON_BUILD_PROPERTIES=$(node -pe "
           JSON.stringify({
@@ -54,6 +54,6 @@ steps:
       - ng version
       - ng build --configuration production --output-path=$BUILD_DIST/lorem-list-client-a
       - printf "\n$(ls -1a $BUILD_DIST/lorem-list-client-a | wc -l) files in $BUILD_DIST/lorem-list-client-a\n"
-      - ls -la $BUILD_DIST/lorem-list-client-a      
-    volumes: 
+      - ls -la $BUILD_DIST/lorem-list-client-a
+    volumes:
       - *cache_volume

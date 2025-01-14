@@ -12,7 +12,6 @@ import { ConfirmationDialogData } from './confirmation-dialog-data';
 
 @Component({
   selector: 'app-confirm',
-  standalone: true,
   imports: [
     MatDialogActions,
     MatDialogClose,
@@ -22,7 +21,6 @@ import { ConfirmationDialogData } from './confirmation-dialog-data';
     MatIcon,
   ],
   templateUrl: './dialog-confirmation.component.html',
-  //   styleUrls: ['./confirm.component.css'],
 })
 export class DialogConfirmationComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData) {}

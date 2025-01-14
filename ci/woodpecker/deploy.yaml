@@ -41,7 +41,7 @@ steps:
       playbook: ci/scripts/deploy/deploy.yaml
       private_key:
         from_secret: deployer_ssh_key_private
-      ssh-extra-args: '-o StrictHostKeyChecking=no'        
+      ssh-extra-args: '-o StrictHostKeyChecking=no'
       user:
         from_secret: deployer_ssh_username
     when:
@@ -59,7 +59,7 @@ steps:
       playbook: ci/scripts/deploy/deploy.yaml
       private_key:
         from_secret: deployer_ssh_key_private
-      ssh-extra-args: '-o StrictHostKeyChecking=no'        
+      ssh-extra-args: '-o StrictHostKeyChecking=no'
       user:
         from_secret: deployer_ssh_username
     when:

@@ -45,7 +45,6 @@ import { MatTableResponsiveDirective } from './mat-table-responsive.directive';
   selector: 'app-lists-manage',
   templateUrl: './lists-manage.component.html',
   styleUrl: './lists-manage.component.scss',
-  standalone: true,
   imports: [
     AsyncPipe,
     CommonModule,
