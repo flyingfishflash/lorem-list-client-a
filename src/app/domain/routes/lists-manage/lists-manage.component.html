@@ -2,10 +2,32 @@
   <div class="default-form-card-container">
     <mat-card-header class="default-card-header">
       <mat-card-title>Manage Lists</mat-card-title>
-      <p></p>
+      <div class="list-management-header-buttons">
+        <button
+          mat-button
+          matTooltip="Create a List"
+          matTooltipPosition="below"
+          color="primary"
+          aria-label="Create a List"
+          (click)="onCreateList()">
+          Create
+          <!-- <i class="material-symbols-rounded">create_new_folder</i> -->
+        </button>
+        <button
+          mat-button
+          matTooltip="Delete all of your Lists"
+          matTooltipPosition="below"
+          color="primary"
+          aria-label="Delete all of Your Lists"
+          (click)="onDeleteAllLists()">
+          Delete All
+          <!-- <i class="material-symbols-rounded">delete_sweep</i> -->
+        </button>
+      </div>
     </mat-card-header>
     <mat-card-content style="border: 1px">
       <mat-drawer-container
+        [hasBackdrop]="false"
         style="background-color: inherit"
         class="list-manage-drawer-container">
         <mat-drawer
@@ -98,7 +120,7 @@
                   [ngClass]="{ isSmallerView: isSmallerView }">
                   <button
                     mat-raised-button
-                    class="button"
+                    class="button footer-button"
                     type="button"
                     (click)="onDismiss(formInstanceListManage)">
                     Dismiss
@@ -106,7 +128,7 @@
                   <button
                     id="save"
                     mat-raised-button
-                    class="button"
+                    class="button footer-button"
                     type="submit">
                     Save
                   </button>
@@ -114,7 +136,7 @@
                     <button
                       id="saveAndCreateAnother"
                       mat-raised-button
-                      class="button"
+                      class="button footer-button"
                       type="submit">
                       Save and Create Another
                     </button>
@@ -127,37 +149,18 @@
 
         <mat-drawer-content style="background-color: inherit">
           <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              padding-right: 5px;
-              background-color: inherit;
-            ">
-            <div>
-              <!-- class="default-small-button action-button-left" -->
-              <button
-                mat-button
-                matTooltip="Create a List"
-                matTooltipPosition="below"
-                color="primary"
-                aria-label="Create a List"
-                (click)="onCreateList()">
-                Create
-                <!-- <i class="material-symbols-rounded">create_new_folder</i> -->
-              </button>
-              <!-- class="default-small-button action-button-right" -->
-              <button
-                mat-button
-                matTooltip="Delete all of your Lists"
-                matTooltipPosition="below"
-                color="primary"
-                aria-label="Delete all of Your Lists"
-                (click)="onDeleteAllLists()">
-                Delete All
-                <!-- <i class="material-symbols-rounded">delete_sweep</i> -->
-              </button>
-            </div>
+            class="list-management-table-header"
+            [ngClass]="{ isSmallerView: isSmallerView }">
+            <mat-form-field
+              class="list-management-table-filter"
+              [ngClass]="{ isSmallerView: isSmallerView }">
+              <mat-label>Filter</mat-label>
+              <input
+                matInput
+                (keyup)="onFilterList($event)"
+                placeholder="Lorem Ipsum"
+                #input />
+            </mat-form-field>
             <mat-paginator
               style="background-color: inherit"
               #paginator
@@ -167,6 +170,7 @@
               aria-label="Select page">
             </mat-paginator>
           </div>
+
           <table
             mat-table
             matSort

@@ -14,7 +14,6 @@
   @include mat.all-component-themes(m3-theme.$light-theme);
   @include mat.system-level-colors(m3-theme.$light-theme);
   @include mat.system-level-elevation(m3-theme.$light-theme);
-  // @include mat.system-level-motion(m3-theme.$light-theme);
   @include mat.system-level-shape(m3-theme.$light-theme);
   @include mat.system-level-state(m3-theme.$light-theme);
   @include mat.system-level-typography(m3-theme.$light-theme);
@@ -65,6 +64,8 @@ body {
 }
 
 .default-card-header {
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1em;
 }
 

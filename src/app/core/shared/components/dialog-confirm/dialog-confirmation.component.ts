@@ -7,7 +7,6 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { MatIcon } from '@angular/material/icon';
 import { ConfirmationDialogData } from './confirmation-dialog-data';
 
 @Component({
@@ -18,7 +17,6 @@ import { ConfirmationDialogData } from './confirmation-dialog-data';
     MatDialogContent,
     MatButtonModule,
     MatDialogTitle,
-    MatIcon,
   ],
   templateUrl: './dialog-confirmation.component.html',
 })

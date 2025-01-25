@@ -216,6 +216,11 @@ export class ListsManageComponent implements OnDestroy {
     });
   }
 
+  onFilterList(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
   onEditList(row: LrmList) {
     this.isListBeingCreated = false;
     this.isListBeingEdited = true;
