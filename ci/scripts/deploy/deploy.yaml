@@ -98,12 +98,12 @@
 
     - name: Deploy quadlet lorem-list-client-a{{ region }}
       containers.podman.podman_container:
-        name: lorem-list-client-a{{ region }}
-        image: "{{ registry_url }}/lorem-list-client-a:{{ tag }}"
+        name: lorem-list-client-a-{{ region }}
+        image: '{{ registry_url }}/lorem-list-client-a:{{ tag }}'
         log_driver: journald
         network:
           - lorem-list-client-a-{{ region }}.network
-        ports: "{{ published_ports_client }}"
+        ports: '{{ published_ports_client }}'
         env:
           UPSTREAM_SERVER: lorem-list-api-{{ region }}.flyingfishflash.net
           API_SERVER_URL: https://lorem-list-api-{{ region }}.flyingfishflash.net/api/v1

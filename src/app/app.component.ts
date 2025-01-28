@@ -28,7 +28,6 @@ import { domainRoutes } from './domain/domain-config-routes';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  standalone: true,
   imports: [
     MatMenuModule,
     MatToolbarModule,

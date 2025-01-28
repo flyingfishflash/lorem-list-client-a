@@ -29,7 +29,7 @@ steps:
       - pwd
       - mkdir dist
       - cp -rvp /woodpecker/cache/$CI_REPO/dist ./
-    volumes: 
+    volumes:
       - *cache_volume
 
   - name: publish
@@ -47,5 +47,5 @@ steps:
         from_secret: registry_username
       password:
         from_secret: registry_password
-    volumes: 
+    volumes:
       - *cache_volume

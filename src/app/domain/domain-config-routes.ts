@@ -1,13 +1,13 @@
 export const domainRoutes = {
   itemCreate: 'item-create',
   itemsManage: 'items-manage',
-  listCreate: 'list-create',
   listsManage: 'lists-manage',
 } as const;
 
 export const domainApiRoutes = {
   items: '/items',
   lists: '/lists',
+  listsCount: '/lists/count',
   managementHealth: '/management/health',
   managementInfo: '/management/info',
   publicLists: '/public/lists',

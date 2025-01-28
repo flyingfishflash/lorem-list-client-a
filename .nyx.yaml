@@ -29,20 +29,20 @@ git:
   remotes:
     lan:
       authenticationMethod: USER_PASSWORD
-      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
-      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
+      user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
+      password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
     gitlab:
       authenticationMethod: USER_PASSWORD
-      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}"
-      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}"
+      user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}'
+      password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}'
     github:
       authenticationMethod: USER_PASSWORD
-      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}"
-      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}"
+      user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}'
+      password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}'
     codeberg:
       authenticationMethod: USER_PASSWORD
-      user: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
-      password: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
+      user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
+      password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
 releaseTypes:
   enabled:
     - mainline
@@ -80,7 +80,11 @@ releaseTypes:
       gitTag: 'true'
       matchBranches: '^release$'
       matchEnvironmentVariables:
+<<<<<<< HEAD
         CI: "^(true|woodpecker)$"
+=======
+        CI: '^(true|woodpecker)$'
+>>>>>>> feature-manage-lists
       matchWorkspaceStatus: 'CLEAN'
       publish: 'true'
     internal:
@@ -103,6 +107,7 @@ services:
   lan:
     type: "GITHUB"
     options:
+<<<<<<< HEAD
       AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}"
       BASE_URI: "https://forgejo.flyingfishflash.net/api/v1"
       REPOSITORY_NAME: "lorem-list-client-a"
@@ -119,3 +124,21 @@ services:
       AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}"
       REPOSITORY_NAME: "lorem-list-client-a"
       REPOSITORY_OWNER: "flyingfishflash"
+=======
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
+      BASE_URI: 'https://forgejo.flyingfishflash.net/api/v1'
+      REPOSITORY_NAME: 'lorem-list-client-a'
+      REPOSITORY_OWNER: 'lorem-list'
+  github:
+    type: 'GITHUB'
+    options:
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}'
+      REPOSITORY_NAME: 'lorem-list-client-a'
+      REPOSITORY_OWNER: 'flyingfishflash'
+  gitlab:
+    type: 'GITLAB'
+    options:
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}'
+      REPOSITORY_NAME: 'lorem-list-client-a'
+      REPOSITORY_OWNER: 'flyingfishflash'
+>>>>>>> feature-manage-lists

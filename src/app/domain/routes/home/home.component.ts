@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, JsonPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, OnInit, Signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -20,8 +20,7 @@ import { ManagementService } from '../../services/api/management.service';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
-  imports: [AsyncPipe, DatePipe, JsonPipe, MatButtonModule, MatCardModule],
+  imports: [AsyncPipe, MatButtonModule, MatCardModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

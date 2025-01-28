@@ -4,9 +4,10 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import {
-  APP_INITIALIZER,
   ApplicationConfig,
+  inject,
   isDevMode,
+  provideAppInitializer,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -37,24 +38,20 @@ const appInitializerFn = (
 export const appConfig: ApplicationConfig = {
   providers: [
     AppConfigRuntime,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitializerFn,
-      deps: [AppConfigRuntime],
-      multi: true,
-    },
-    {
-      provide: APP_INITIALIZER,
-      multi: true,
-      useFactory: (iconRegistry: MatIconRegistry) => () => {
+    provideAppInitializer(() => {
+      const initializerFn = appInitializerFn(inject(AppConfigRuntime));
+      return initializerFn();
+    }),
+    provideAppInitializer(() => {
+      const initializerFn = ((iconRegistry: MatIconRegistry) => () => {
         const defaultFontSetClasses = iconRegistry.getDefaultFontSetClass();
         const outlinedFontSetClasses = defaultFontSetClasses
           .filter((fontSetClass) => fontSetClass !== 'material-icons')
           .concat(['material-symbols-rounded']);
         iconRegistry.setDefaultFontSetClass(...outlinedFontSetClasses);
-      },
-      deps: [MatIconRegistry],
-    },
+      })(inject(MatIconRegistry));
+      return initializerFn();
+    }),
     {
       provide: MIN_LOG_LEVEL,
       useValue: isDevMode() ? LogLevel.DEBUG : LogLevel.INFO,

@@ -2,24 +2,21 @@
   width: 100%;
 }
 
-// .default-form-card-container {
-//   margin: 5px;
-// }
-
-.list-manage-drawer-container {
-  // set something here
+.min-width-200px {
+  min-width: 200px;
 }
 
 .mat-drawer-content {
-  min-height: 400px;
+  min-height: 550px;
+  background-color: inherit;
 }
 
-.full-width-table,
-.home-button {
+.full-width-table {
   width: 100%;
 }
 
 .home-button {
+  width: 100%;
   margin-top: 1rem;
 }
 
@@ -35,9 +32,19 @@
   margin-right: 0;
 }
 
-@media (max-width: 1280px) {
+.mat-mdc-table {
+  background-color: inherit;
+}
+
+.mat-mdc-card-content {
+  background: inherit;
+}
+
+@media (max-width: 1260px) {
   .mat-mdc-table[matTableResponsive] .mat-mdc-header-row {
-    display: flex;
+    display: none;
+    // background-color: red;
+    // display: flex;
     flex-wrap: wrap;
     position: sticky;
     top: 0;
@@ -81,7 +88,7 @@
     td.mat-column-actions {
       display: flex;
       justify-content: center;
-      padding: 0 0.5rem;
+      padding: 0.5rem;
       border: none;
       min-height: 50px;
 
@@ -98,4 +105,43 @@
       border: 0.5rem solid red;
     }
   }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.col {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.list-management-table-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: inherit;
+}
+
+.list-management-table-header.isSmallerView {
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.list-management-table-filter.isSmallerView {
+  width: 100%;
+}
+
+.footer-button-container.isSmallerView {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 6px;
+}
+
+.footer-button {
+  margin-right: 6px;
 }

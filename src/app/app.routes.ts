@@ -40,14 +40,6 @@ export const routes: Routes = [
     canActivate: [isAuthenticatedGuard],
   },
   {
-    path: domainRoutes.listCreate,
-    loadComponent: () =>
-      import('./domain/routes/list-create/list-create.component').then(
-        (m) => m.ListCreateComponent,
-      ),
-    canActivate: [isAuthenticatedGuard],
-  },
-  {
     path: domainRoutes.itemsManage,
     loadComponent: () =>
       import('./domain/routes/items-manage/items-manage.component').then(

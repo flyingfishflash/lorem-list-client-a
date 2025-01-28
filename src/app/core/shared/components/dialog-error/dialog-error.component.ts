@@ -10,7 +10,6 @@ import {
 
 @Component({
   selector: 'app-dialog-error',
-  standalone: true,
   imports: [
     MatDialogActions,
     MatDialogClose,

@@ -11,7 +11,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "declaration": false,
-    "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
