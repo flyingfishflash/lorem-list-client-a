@@ -68,7 +68,7 @@ releaseTypes:
       gitTag: 'false'
       matchBranches: '^main$'
       matchEnvironmentVariables:
-        CI: '^true$'      
+        CI: '^true$'
       matchWorkspaceStatus: 'CLEAN'
       publish: 'false'
     release:
@@ -94,14 +94,14 @@ releaseTypes:
           value: '{{#sanitize}}{{#environmentVariable}}DRONE_BUILD_NUMBER{{/environmentVariable}}{{/sanitize}}'
 services:
   codeberg:
-    type: "GITHUB"
+    type: 'GITHUB'
     options:
-      AUTHENTICATION_TOKEN: "{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}"
-      BASE_URI: "https://codeberg.org/api/v1"
-      REPOSITORY_NAME: "lorem-list-client-a"
-      REPOSITORY_OWNER: "lorem-list"
+      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
+      BASE_URI: 'https://codeberg.org/api/v1'
+      REPOSITORY_NAME: 'lorem-list-client-a'
+      REPOSITORY_OWNER: 'lorem-list'
   lan:
-    type: "GITHUB"
+    type: 'GITHUB'
     options:
       AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_LAN{{/environmentVariable}}'
       BASE_URI: 'https://forgejo.flyingfishflash.net/api/v1'
