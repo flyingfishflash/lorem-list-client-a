@@ -1,0 +1,147 @@
+.table-update-drawer {
+  width: 100%;
+}
+
+.min-width-200px {
+  min-width: 200px;
+}
+
+.mat-drawer-content {
+  min-height: 550px;
+  background-color: inherit;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.home-button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.default-small-button {
+  margin-left: 5px;
+}
+
+.default-small-button.action-button-left {
+  margin-left: 0;
+}
+
+.default-small-button.action-button-right {
+  margin-right: 0;
+}
+
+.mat-mdc-table {
+  background-color: inherit;
+}
+
+.mat-mdc-card-content {
+  background: inherit;
+}
+
+@media (max-width: 1260px) {
+  .mat-mdc-table[matTableResponsive] .mat-mdc-header-row {
+    display: none;
+    // background-color: red;
+    // display: flex;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    th.mat-mdc-header-cell {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      padding: 1rem 0.5rem;
+      justify-content: space-around;
+
+      &:not([mat-sort-header]),
+      &.mat-sort-header-disabled,
+      &.mat-column-actions {
+        display: none;
+      }
+
+      .mat-sort-header-container {
+        padding-left: 15px;
+      }
+    }
+  }
+
+  .mat-mdc-row {
+    td.mat-mdc-cell:not(.mat-column-actions) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      padding: 0.5rem;
+      text-align: right;
+      word-break: break-word;
+      border: none;
+      // border: 0.2rem solid aquamarine;
+
+      &:before {
+        content: attr(data-column-name);
+        text-align: left;
+      }
+    }
+
+    td.mat-column-actions {
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem;
+      border: none;
+      min-height: 50px;
+
+      // more spacing between buttons on mobile
+      > .default-small-button {
+        margin-left: 1.5rem;
+      }
+    }
+  }
+
+  .mat-card,
+  .mat-expansion-panel {
+    .mat-table[matTableResponsive] {
+      border: 0.5rem solid red;
+    }
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.col {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.list-management-table-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: inherit;
+}
+
+.list-management-table-header.isSmallerView {
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.list-management-table-filter.isSmallerView {
+  width: 100%;
+}
+
+.footer-button-container.isSmallerView {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 6px;
+}
+
+.footer-button {
+  margin-right: 6px;
+}

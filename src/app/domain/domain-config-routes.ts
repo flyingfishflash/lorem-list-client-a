@@ -1,6 +1,7 @@
 export const domainRoutes = {
   itemCreate: 'item-create',
   itemsManage: 'items-manage',
+  listManage: 'list-manage-content',
   listsManage: 'lists-manage',
 } as const;
 

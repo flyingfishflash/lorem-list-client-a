@@ -32,6 +32,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: domainRoutes.listManage,
+    loadComponent: () =>
+      import(
+        './domain/routes/list-manage-content/list-manage-content.component'
+      ).then((m) => m.ListManageContentComponent),
+    canActivate: [isAuthenticatedGuard],
+  },
+  {
     path: domainRoutes.listsManage,
     loadComponent: () =>
       import('./domain/routes/lists-manage/lists-manage.component').then(

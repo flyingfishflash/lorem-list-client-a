@@ -29,24 +29,21 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Router } from '@angular/router';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { coerceEmptyStringToNull } from '../../../core/shared/coerce-empty-string-to-null.function';
 import { DialogService } from '../../../core/shared/components/dialog.service';
 import { Logger } from '../../../core/shared/logging/logger';
 import { YesNoPipe } from '../../../core/shared/pipes/yes-no.pipe';
 import { MATCH_STRING_OF_WHITE_SPACE } from '../../../core/shared/regex-pattern-validations.contants';
-import { domainRoutes } from '../../domain-config-routes';
 import { ListCreateRequest } from '../../model/list-create-request';
-import { LrmList } from '../../model/lrm-list';
+// import { LrmList } from '../../model/lrm-list';
+import { LrmItem } from '../../model/lrm-item';
 import { LrmListPatchRequest } from '../../model/lrm-list-patch-request';
 import { ListsService } from '../../services/api/lists.service';
 import { MatTableResponsiveDirective } from './mat-table-responsive.directive';
 
 @Component({
-  selector: 'app-lists-manage',
-  templateUrl: './lists-manage.component.html',
-  styleUrl: './lists-manage.component.scss',
+  selector: 'app-list-manage-content',
   imports: [
     AsyncPipe,
     CommonModule,
@@ -69,14 +66,16 @@ import { MatTableResponsiveDirective } from './mat-table-responsive.directive';
     ReactiveFormsModule,
     YesNoPipe,
   ],
+  templateUrl: './list-manage-content.component.html',
+  styleUrl: './list-manage-content.component.scss',
 })
-export class ListsManageComponent implements OnDestroy {
+export class ListManageContentComponent implements OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('nameInput') nameInput!: ElementRef;
 
-  dataSource = new MatTableDataSource<LrmList>();
-  dataSource$: Observable<MatTableDataSource<LrmList>>;
+  dataSource = new MatTableDataSource<LrmItem>();
+  dataSource$: Observable<MatTableDataSource<LrmItem>>;
   destroyed$ = new Subject<void>();
   displayedColumns: string[] = [];
   initalPaginatorPageSize: number = 0;
@@ -88,11 +87,10 @@ export class ListsManageComponent implements OnDestroy {
   readonly #dialogService = inject(DialogService);
   readonly #formBuilder = inject(NonNullableFormBuilder);
   readonly #listService = inject(ListsService);
-  readonly #logger = new Logger('list-manage.component');
-  readonly #router = inject(Router);
+  readonly #logger = new Logger('list-manage-content.component');
   readonly #snackBar = inject(MatSnackBar);
 
-  #currentRow: LrmList | null = null;
+  #currentRow: LrmItem | null = null;
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   formListManage = this.#formBuilder.group(
@@ -140,30 +138,30 @@ export class ListsManageComponent implements OnDestroy {
         }
       });
 
-    const emptyLrmList: LrmList[] = [
+    const emptyLrmItem: LrmItem[] = [
       {
         id: '',
         name: '',
         description: '',
-        public: false,
+        quantity: 0,
         created: '',
         createdBy: '',
         updated: '',
         updatedBy: '',
-        items: [],
+        lists: [],
       },
     ];
 
     // subscription is managed by async pipe in html template
-    this.dataSource$ = this.#listService.getLists().pipe(
+    this.dataSource$ = this.#listService.getListIncludeItems('undefined').pipe(
       map((serviceResponse) => {
         // initialize dataSource as empty and set sort/pagination
-        this.dataSource = new MatTableDataSource<LrmList>(emptyLrmList);
+        this.dataSource = new MatTableDataSource<LrmItem>(emptyLrmItem);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         console.log(this.initalPaginatorPageSize);
         this.dataSource.paginator.pageSize = this.initalPaginatorPageSize;
-        this.dataSource.data = serviceResponse;
+        this.dataSource.data = serviceResponse.items;
         return this.dataSource;
       }),
     );
@@ -225,27 +223,27 @@ export class ListsManageComponent implements OnDestroy {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  onEditList(row: LrmList) {
+  onEditList(row: LrmItem) {
     this.isListBeingCreated = false;
     this.isListBeingEdited = true;
     this.formListManage.patchValue(row);
     this.#currentRow = { ...row };
   }
 
-  onTogglePublicList(row: LrmList) {
-    const patchRequest: LrmListPatchRequest = {};
-    patchRequest.public = !row.public;
-    this.#submitPatchRequest(row.id, patchRequest);
+  onTogglePublicList(row: LrmItem) {
+    this.#logger.debug('onTogglePublicList()', row);
+    this.#noOp();
+    // const patchRequest: LrmListPatchRequest = {};
+    // patchRequest.public = !row.public;
+    // this.#submitPatchRequest(row.id, patchRequest);
   }
 
   onManageListContent() {
-    this.#router.navigate([domainRoutes.listManage]);
-    // this.#rout
     // load another routable component with this functionality
     this.#noOp();
   }
 
-  onDeleteList(row: LrmList) {
+  onDeleteList(row: LrmItem) {
     this.#listService.deleteEmptyList(row.id).subscribe({
       next: () => this.#refreshTable(),
       error: (error) => {
@@ -391,9 +389,9 @@ export class ListsManageComponent implements OnDestroy {
     }
   }
 
-  #buildPatchRequest(workingRow: LrmList): LrmListPatchRequest {
+  #buildPatchRequest(workingRow: LrmItem): LrmListPatchRequest {
     const patchRequest: LrmListPatchRequest = {};
-    const { description, name, public: isPublic } = this.formListManage.value;
+    const { description, name } = this.formListManage.value;
 
     // Check for description changes
     const newDescription = description?.trim() || '';
@@ -411,10 +409,10 @@ export class ListsManageComponent implements OnDestroy {
       patchRequest.name = newName;
     }
 
-    // Check for public status change
-    if (isPublic !== workingRow.public) {
-      patchRequest.public = isPublic;
-    }
+    // // Check for public status change
+    // if (isPublic !== workingRow.public) {
+    //   patchRequest.public = isPublic;
+    // }
 
     return patchRequest;
   }
@@ -428,9 +426,9 @@ export class ListsManageComponent implements OnDestroy {
 
   #refreshTable() {
     // refresh dataSource with a new list of lists
-    this.#listService.getLists().subscribe({
+    this.#listService.getListIncludeItems('this.#currentRow?.id').subscribe({
       next: (getListsServiceResponse) => {
-        this.dataSource.data = getListsServiceResponse;
+        this.dataSource.data = getListsServiceResponse.items;
       },
       error: (error) => {
         this.#logger.error('', error);
