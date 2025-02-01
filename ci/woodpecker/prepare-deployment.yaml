@@ -45,8 +45,6 @@ steps:
         from_secret: oidc_name
       OIDC_ENDPOINT:
         from_secret: oidc_endpoint
-      OIDC_CLIENT_ID:
-        from_secret: oidc_client_id
       OIDC_SCOPE:
         from_secret: oidc_scope
       OIDC_ROLE_CLAIM:
@@ -63,12 +61,42 @@ steps:
       - 'echo "deploy_to_host: $DEPLOY_TO_HOST" >> $CACHE_DEPLOY/variables.yaml'
       - 'echo "oidc_name: $OIDC_NAME" >> $CACHE_DEPLOY/variables.yaml'
       - 'echo "oidc_endpoint: $OIDC_ENDPOINT" >> $CACHE_DEPLOY/variables.yaml'
-      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> $CACHE_DEPLOY/variables.yaml'
       - 'echo "oidc_scope: $OIDC_SCOPE" >> $CACHE_DEPLOY/variables.yaml'
       - 'echo "oidc_role_claim: $OIDC_ROLE_CLAIM" >> $CACHE_DEPLOY/variables.yaml'
       - 'echo "oidc_username_claim: $OIDC_USERNAME_CLAIM" >> $CACHE_DEPLOY/variables.yaml'
       - ls -l $CACHE_DEPLOY
-      - cat $CACHE_DEPLOY/inventory
       - cat $CACHE_DEPLOY/variables.yaml
     volumes:
       - *cache_volume
+
+  - name: append oidc client id to variables file [dev]
+    image: registry.flyingfishflash.net/docker.io/alpine
+    environment:
+      OIDC_CLIENT_ID:
+        from_secret: oidc_client_id_dev
+    commands:
+      - *export_cache_volume_deploy
+      - *source_cached_version
+      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> $CACHE_DEPLOY/variables.yaml'
+      - cat $CACHE_DEPLOY/variables.yaml
+    volumes:
+      - *cache_volume
+    when:
+      branch:
+        exclude: release
+
+  - name: append oidc client id to variables file [prd]
+    image: registry.flyingfishflash.net/docker.io/alpine
+    environment:
+      OIDC_CLIENT_ID:
+        from_secret: oidc_client_id_prd
+    commands:
+      - *export_cache_volume_deploy
+      - *source_cached_version
+      - 'echo "oidc_client_id: $OIDC_CLIENT_ID" >> $CACHE_DEPLOY/variables.yaml'
+      - cat $CACHE_DEPLOY/variables.yaml
+    volumes:
+      - *cache_volume
+    when:
+      branch:
+        include: release
