@@ -83,6 +83,25 @@ export class ListsService {
       );
   }
 
+  getListIncludeItems(listId: string): Observable<LrmList> {
+    const httpParams = new HttpParams().set('includeItems', 'true');
+    listId = "498cfef6-db29-4635-be4f-b167fa75823c"
+    return this.#http
+      .get<any>(`${environment.api.server.url}${domainApiRoutes.lists}/${listId}`, {
+        params: httpParams,
+      })
+      .pipe(
+        map((apiResponse) => {
+          this.#logger.debug('getLists()', apiResponse);
+          return apiResponse.content;
+        }),
+        catchError((error) => {
+          this.#logger.debug('getLists()', error);
+          return throwError(() => error);
+        }),
+      );
+  }
+
   getListsCount(): Observable<number> {
     return this.#http
       .get<any>(`${environment.api.server.url}${domainApiRoutes.listsCount}`)

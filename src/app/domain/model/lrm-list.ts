@@ -1,3 +1,5 @@
+import { LrmItem } from "./lrm-item";
+
 export interface LrmList {
   id: string;
   name: string;
@@ -7,4 +9,5 @@ export interface LrmList {
   createdBy: string;
   updated: string;
   updatedBy: string;
+  items: LrmItem[];
 }
