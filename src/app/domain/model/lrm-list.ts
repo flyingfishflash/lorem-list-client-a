@@ -1,4 +1,4 @@
-import { LrmItem } from './lrm-item';
+import { LrmListItem } from './lrm-list-item';
 
 export interface LrmList {
   id: string;
@@ -9,5 +9,5 @@ export interface LrmList {
   createdBy: string;
   updated: string;
   updatedBy: string;
-  items: LrmItem[];
+  items: LrmListItem[];
 }

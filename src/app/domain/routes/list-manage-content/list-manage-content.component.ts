@@ -4,7 +4,9 @@ import {
   Component,
   ElementRef,
   inject,
+  input,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import {
@@ -35,10 +37,11 @@ import { DialogService } from '../../../core/shared/components/dialog.service';
 import { Logger } from '../../../core/shared/logging/logger';
 import { YesNoPipe } from '../../../core/shared/pipes/yes-no.pipe';
 import { MATCH_STRING_OF_WHITE_SPACE } from '../../../core/shared/regex-pattern-validations.contants';
-import { ListCreateRequest } from '../../model/list-create-request';
-// import { LrmList } from '../../model/lrm-list';
-import { LrmItem } from '../../model/lrm-item';
+import { ItemCreateRequest } from '../../model/item-create-request';
+import { LrmListItem } from '../../model/lrm-list-item';
+import { LrmListItemPatchRequest } from '../../model/lrm-list-item-patch-request';
 import { LrmListPatchRequest } from '../../model/lrm-list-patch-request';
+import { ListItemsService } from '../../services/api/list-items.service';
 import { ListsService } from '../../services/api/lists.service';
 import { MatTableResponsiveDirective } from './mat-table-responsive.directive';
 
@@ -69,31 +72,34 @@ import { MatTableResponsiveDirective } from './mat-table-responsive.directive';
   templateUrl: './list-manage-content.component.html',
   styleUrl: './list-manage-content.component.scss',
 })
-export class ListManageContentComponent implements OnDestroy {
+export class ListManageContentComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('nameInput') nameInput!: ElementRef;
 
-  dataSource = new MatTableDataSource<LrmItem>();
-  dataSource$: Observable<MatTableDataSource<LrmItem>>;
+  dataSource = new MatTableDataSource<LrmListItem>();
+  dataSource$: Observable<MatTableDataSource<LrmListItem>> | undefined;
   destroyed$ = new Subject<void>();
   displayedColumns: string[] = [];
   initalPaginatorPageSize: number = 0;
   isSmallerView: boolean | undefined;
-  isListBeingEdited = false;
-  isListBeingCreated = false;
+  isListItemBeingEdited = false;
+  isListItemBeingCreated = false;
   isSaveandCreateAnother = false;
+  listId = input.required<string>();
+  listName: string = '';
 
   readonly #dialogService = inject(DialogService);
   readonly #formBuilder = inject(NonNullableFormBuilder);
   readonly #listService = inject(ListsService);
+  readonly #listItemService = inject(ListItemsService);
   readonly #logger = new Logger('list-manage-content.component');
   readonly #snackBar = inject(MatSnackBar);
 
-  #currentRow: LrmItem | null = null;
+  #currentRow: LrmListItem | null = null;
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  formListManage = this.#formBuilder.group(
+  formListItemManage = this.#formBuilder.group(
     {
       name: [
         '',
@@ -110,7 +116,8 @@ export class ListManageContentComponent implements OnDestroy {
           Validators.pattern(MATCH_STRING_OF_WHITE_SPACE),
         ],
       ],
-      public: [false],
+      quantity: [0, [Validators.min(0), Validators.max(10000)]],
+      isSuppressed: [false],
     },
     { updateOn: 'submit' },
   );
@@ -137,13 +144,16 @@ export class ListManageContentComponent implements OnDestroy {
           else this.#doLargerViewSettings();
         }
       });
+  }
 
-    const emptyLrmItem: LrmItem[] = [
+  ngOnInit(): void {
+    const emptyLrmListItem: LrmListItem[] = [
       {
         id: '',
         name: '',
         description: '',
         quantity: 0,
+        isSuppressed: false,
         created: '',
         createdBy: '',
         updated: '',
@@ -152,19 +162,23 @@ export class ListManageContentComponent implements OnDestroy {
       },
     ];
 
-    // subscription is managed by async pipe in html template
-    this.dataSource$ = this.#listService.getListIncludeItems('undefined').pipe(
-      map((serviceResponse) => {
-        // initialize dataSource as empty and set sort/pagination
-        this.dataSource = new MatTableDataSource<LrmItem>(emptyLrmItem);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-        console.log(this.initalPaginatorPageSize);
-        this.dataSource.paginator.pageSize = this.initalPaginatorPageSize;
-        this.dataSource.data = serviceResponse.items;
-        return this.dataSource;
-      }),
-    );
+    this.dataSource$ = this.#listService
+      .getListIncludeItems(this.listId())
+      .pipe(
+        map((serviceResponse) => {
+          // initialize dataSource as empty and set sort/pagination
+          this.dataSource = new MatTableDataSource<LrmListItem>(
+            emptyLrmListItem,
+          );
+          this.listName = serviceResponse.name;
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          console.log(this.initalPaginatorPageSize);
+          this.dataSource.paginator.pageSize = this.initalPaginatorPageSize;
+          this.dataSource.data = serviceResponse.items;
+          return this.dataSource;
+        }),
+      );
   }
 
   ngOnDestroy() {
@@ -172,50 +186,50 @@ export class ListManageContentComponent implements OnDestroy {
     this.destroyed$.complete();
   }
 
-  onCreateList() {
-    this.isListBeingCreated = true;
-    this.isListBeingEdited = false;
+  onCreateListItem() {
+    this.isListItemBeingCreated = true;
+    this.isListItemBeingEdited = false;
   }
 
-  onDeleteAllLists() {
-    this.#listService.getListsCount().subscribe((listsCount) => {
-      if (listsCount > 0) {
-        this.#dialogService
-          .confirmationDialog({
-            title: 'Delete All Lists',
-            message:
-              'The items associated with each list will not be deleted. ' +
-              'Are you certain you want to delete all of your lists?',
-            confirmCaption: 'Yes',
-            cancelCaption: 'Cancel',
-          })
-          .subscribe((confirmed) => {
-            if (confirmed) {
-              this.#listService.deleteLists().subscribe({
-                next: (deleteListServiceResponse) => {
-                  this.#logger.debug(
-                    'deleteLists() service response',
-                    deleteListServiceResponse,
-                  );
-                  const deletedCount =
-                    deleteListServiceResponse.listNames.length;
-                  this.#snackBar.open(`Deleted ${deletedCount} Lists`, 'OK', {
+  onRemoveAllListItems() {
+    if (this.dataSource.data.length > 0) {
+      this.#dialogService
+        .confirmationDialog({
+          title: 'Remove All List Items',
+          message:
+            'The items associated with each list will be removed from the list, not deleted. ' +
+            'Are you certain you want to clear all items from this list?',
+          confirmCaption: 'Yes',
+          cancelCaption: 'Cancel',
+        })
+        .subscribe((confirmed) => {
+          if (confirmed) {
+            this.#listItemService.deleteItems(this.listId()).subscribe({
+              next: (deleteItemsServiceResponse) => {
+                this.#logger.debug(
+                  'deleteitems() service response',
+                  deleteItemsServiceResponse,
+                );
+                this.#snackBar.open(
+                  `${deleteItemsServiceResponse.message}`,
+                  'OK',
+                  {
                     duration: 2500,
-                  });
-                  this.#refreshTable();
-                },
-                error: (error) => {
-                  this.#logger.error('', error);
-                },
-              });
-            }
-          });
-      } else {
-        this.#snackBar.open('No Lists to Delete', 'OK', {
-          duration: 2500,
+                  },
+                );
+                this.#refreshTable();
+              },
+              error: (error) => {
+                this.#logger.error('', error);
+              },
+            });
+          }
         });
-      }
-    });
+    } else {
+      this.#snackBar.open('No Items to Remove', 'OK', {
+        duration: 2500,
+      });
+    }
   }
 
   onFilterList(event: Event) {
@@ -223,19 +237,19 @@ export class ListManageContentComponent implements OnDestroy {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  onEditList(row: LrmItem) {
-    this.isListBeingCreated = false;
-    this.isListBeingEdited = true;
-    this.formListManage.patchValue(row);
+  onEditListItem(row: LrmListItem) {
+    this.isListItemBeingCreated = false;
+    this.isListItemBeingEdited = true;
+    this.formListItemManage.patchValue(row);
     this.#currentRow = { ...row };
   }
 
-  onTogglePublicList(row: LrmItem) {
-    this.#logger.debug('onTogglePublicList()', row);
-    this.#noOp();
-    // const patchRequest: LrmListPatchRequest = {};
-    // patchRequest.public = !row.public;
-    // this.#submitPatchRequest(row.id, patchRequest);
+  onToggleItemSuppression(row: LrmListItem) {
+    this.#logger.debug('onToggleSuppression()', row);
+    const patchRequest: LrmListItemPatchRequest = {
+      isSuppressed: !row.isSuppressed,
+    };
+    this.#submitPatchRequest(this.listId(), row.id, patchRequest);
   }
 
   onManageListContent() {
@@ -243,45 +257,45 @@ export class ListManageContentComponent implements OnDestroy {
     this.#noOp();
   }
 
-  onDeleteList(row: LrmItem) {
-    this.#listService.deleteEmptyList(row.id).subscribe({
+  onRemoveListItem(row: LrmListItem) {
+    this.#listItemService.deleteItem(this.listId(), row.id).subscribe({
       next: () => this.#refreshTable(),
       error: (error) => {
         // http status 422 indicates the list could not be deleted due to existing item associations
-        if (error.status == 422) {
-          // confirm the user wants to remove the item associations
-          this.#dialogService
-            .confirmationDialog({
-              title: 'Delete List',
-              message: `${error.error.message}
+        // if (error.status == 422) {
+        //   // confirm the user wants to remove the item associations
+        //   this.#dialogService
+        //     .confirmationDialog({
+        //       title: 'Remove Item',
+        //       message: `${error.error.message}
 
-                If the list is deleted its associated items will not be deleted.
+        //         Item will be remove the list.
 
-                Proceed with deleting ${row.name}?`,
-              confirmCaption: 'Yes',
-              cancelCaption: 'Cancel',
-            })
-            .subscribe((confirmed) => {
-              if (confirmed) {
-                // delete the list and the item associations
-                this.#listService
-                  .deleteListAndItemAssociations(row.id)
-                  .subscribe({
-                    next: () => this.#refreshTable(),
-                    error: (error) =>
-                      this.#logger.error(
-                        'deleteListAndItemAssociations() error: ',
-                        error,
-                      ),
-                  });
-              }
-            });
-        } else {
-          this.#logger.error('deleteEmptyList() error: ', error);
-          this.#snackBar.open('List not deleted due to an error.', 'OK', {
-            duration: 2500,
-          });
-        }
+        //         Proceed with removing the item ${row.name}?`,
+        //       confirmCaption: 'Yes',
+        //       cancelCaption: 'Cancel',
+        //     })
+        //     .subscribe((confirmed) => {
+        //       if (confirmed) {
+        //         // delete the list and the item associations
+        //         this.#listService
+        //           .deleteListAndItemAssociations(row.id)
+        //           .subscribe({
+        //             next: () => this.#refreshTable(),
+        //             error: (error) =>
+        //               this.#logger.error(
+        //                 'deleteListAndItemAssociations() error: ',
+        //                 error,
+        //               ),
+        //           });
+        //       }
+        //     });
+        // } else {
+        this.#logger.error('deleteEmptyList() error: ', error);
+        this.#snackBar.open('List not deleted due to an error.', 'OK', {
+          duration: 2500,
+        });
+        // }
       },
     });
   }
@@ -292,19 +306,25 @@ export class ListManageContentComponent implements OnDestroy {
     instanceFormListManage: FormGroupDirective,
     event: SubmitEvent,
   ) {
-    if (!this.formListManage.valid) {
+    if (!this.formListItemManage.valid) {
       this.#logger.debug('form is not valid');
+      Object.keys(this.formListItemManage.controls).forEach((key) => {
+        const controlErrors = this.formListItemManage.get(key)?.errors;
+        if (controlErrors) {
+          console.log(`Validation errors for ${key}:`, controlErrors);
+        }
+      });
       return;
     }
 
-    this.isListBeingCreated
+    this.isListItemBeingCreated
       ? this.#doListCreate(instanceFormListManage, event)
       : this.#doListEdit(instanceFormListManage);
   }
 
   onDismiss(instanceFormListManage: FormGroupDirective) {
-    this.isListBeingCreated = false;
-    this.isListBeingEdited = false;
+    this.isListItemBeingCreated = false;
+    this.isListItemBeingEdited = false;
     this.#doResetForm(instanceFormListManage);
   }
 
@@ -318,7 +338,7 @@ export class ListManageContentComponent implements OnDestroy {
     instanceFormListManage: FormGroupDirective,
     event: SubmitEvent,
   ) {
-    this.#saveCreatedListAndRefreshTable();
+    this.#saveCreatedItemAndRefreshTable();
 
     if (event.submitter) {
       switch (event.submitter.id) {
@@ -347,22 +367,24 @@ export class ListManageContentComponent implements OnDestroy {
 
   #doResetForm(instanceFormListManage: FormGroupDirective) {
     instanceFormListManage.resetForm();
-    this.formListManage.reset();
+    this.formListItemManage.reset();
   }
 
-  #saveCreatedListAndRefreshTable() {
-    const postData: ListCreateRequest = {
-      name: this.formListManage.getRawValue().name,
+  #saveCreatedItemAndRefreshTable() {
+    this.#logger.debug('saveCreatedItemAndRefreshTable()');
+    const postData: ItemCreateRequest = {
+      name: this.formListItemManage.getRawValue().name,
       description: coerceEmptyStringToNull(
-        this.formListManage.getRawValue().description,
+        this.formListItemManage.getRawValue().description,
       ),
-      public: this.formListManage.getRawValue().public,
+      quantity: this.formListItemManage.getRawValue().quantity,
+      isSuppressed: false,
     };
 
-    this.#listService.postList(postData).subscribe({
-      next: (postListServiceResponse) => {
-        this.#logger.debug(postListServiceResponse);
-        this.#snackBar.open(postListServiceResponse, 'OK', {
+    this.#listItemService.postItem(this.listId(), postData).subscribe({
+      next: (postListItemServiceResponse) => {
+        this.#logger.debug(postListItemServiceResponse);
+        this.#snackBar.open(postListItemServiceResponse, 'OK', {
           duration: 6000,
         });
         this.#refreshTable();
@@ -378,7 +400,7 @@ export class ListManageContentComponent implements OnDestroy {
       const workingRow = this.#currentRow;
       const patchRequest = this.#buildPatchRequest(workingRow);
       if (JSON.stringify(patchRequest) !== '{}')
-        this.#submitPatchRequest(workingRow.id, patchRequest);
+        this.#submitPatchRequest(this.listId(), workingRow.id, patchRequest);
       else {
         // TODO: handle empty patch request
         this.#logger.error('patchRequest is empty');
@@ -389,44 +411,44 @@ export class ListManageContentComponent implements OnDestroy {
     }
   }
 
-  #buildPatchRequest(workingRow: LrmItem): LrmListPatchRequest {
-    const patchRequest: LrmListPatchRequest = {};
-    const { description, name } = this.formListManage.value;
+  #buildPatchRequest(workingRow: LrmListItem): LrmListPatchRequest {
+    const patchRequest: LrmListItemPatchRequest = {};
+    const { description = '', name, quantity } = this.formListItemManage.value;
 
-    // Check for description changes
-    const newDescription = description?.trim() || '';
-    if (
-      (workingRow.description === undefined && newDescription) ||
-      (workingRow.description !== undefined &&
-        workingRow.description !== newDescription)
-    ) {
+    const newDescription = description.trim();
+    const newName = name?.trim();
+
+    if (newDescription !== (workingRow.description ?? '')) {
       patchRequest.description = newDescription;
     }
 
-    // Check for name changes
-    const newName = name?.trim();
     if (newName && newName !== workingRow.name) {
       patchRequest.name = newName;
     }
 
-    // // Check for public status change
-    // if (isPublic !== workingRow.public) {
-    //   patchRequest.public = isPublic;
-    // }
+    if (quantity !== undefined && quantity !== workingRow.quantity) {
+      patchRequest.quantity = quantity;
+    }
 
     return patchRequest;
   }
 
-  #submitPatchRequest(id: string, patchRequest: LrmListPatchRequest) {
-    this.#listService.patchList(id, patchRequest).subscribe({
-      next: () => this.#refreshTable(),
-      error: (error) => this.#logger.error('#submitPatchRequest()', error),
-    });
+  #submitPatchRequest(
+    listId: string,
+    itemId: string,
+    patchRequest: LrmListPatchRequest,
+  ) {
+    this.#listItemService
+      .patchListItem(listId, itemId, patchRequest)
+      .subscribe({
+        next: () => this.#refreshTable(),
+        error: (error) => this.#logger.error('#submitPatchRequest()', error),
+      });
   }
 
   #refreshTable() {
     // refresh dataSource with a new list of lists
-    this.#listService.getListIncludeItems('this.#currentRow?.id').subscribe({
+    this.#listService.getListIncludeItems(this.listId()).subscribe({
       next: (getListsServiceResponse) => {
         this.dataSource.data = getListsServiceResponse.items;
       },
@@ -444,8 +466,9 @@ export class ListManageContentComponent implements OnDestroy {
     }
     this.displayedColumns = [
       'name',
-      'public',
       'description',
+      'quantity',
+      'suppressed',
       'created',
       'updated',
       'actions',
@@ -458,7 +481,13 @@ export class ListManageContentComponent implements OnDestroy {
     } else {
       this.initalPaginatorPageSize = 3;
     }
-    this.displayedColumns = ['name', 'public', 'description', 'actions'];
+    this.displayedColumns = [
+      'name',
+      'description',
+      'quantity',
+      'suppressed',
+      'actions',
+    ];
   }
 
   #setPageSize(newSize: number) {

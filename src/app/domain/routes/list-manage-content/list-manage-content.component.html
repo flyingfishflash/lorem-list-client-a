@@ -1,26 +1,26 @@
 <mat-card appearance="outlined">
   <div class="default-form-card-container">
     <mat-card-header class="default-card-header">
-      <mat-card-title>Manage Lists</mat-card-title>
+      <mat-card-title>Manage Content of List '{{ listName }}'</mat-card-title>
       <div class="list-management-header-buttons">
         <button
           mat-button
-          matTooltip="Create a List"
+          matTooltip="Add Items to List"
           matTooltipPosition="below"
           color="primary"
-          aria-label="Create a List"
-          (click)="onCreateList()">
-          Blah
+          aria-label="Add Items to List"
+          (click)="onCreateListItem()">
+          Add Items to List
           <!-- <i class="material-symbols-rounded">create_new_folder</i> -->
         </button>
         <button
           mat-button
-          matTooltip="Delete all of your Lists"
+          matTooltip="Remove all items from this list"
           matTooltipPosition="below"
           color="primary"
-          aria-label="Delete all of Your Lists"
-          (click)="onDeleteAllLists()">
-          Delete All
+          aria-label="Remove all items from this list"
+          (click)="onRemoveAllListItems()">
+          Remove All Items
           <!-- <i class="material-symbols-rounded">delete_sweep</i> -->
         </button>
       </div>
@@ -34,18 +34,18 @@
           mode="over"
           position="end"
           class="table-update-drawer"
-          [opened]="isListBeingEdited || isListBeingCreated"
+          [opened]="isListItemBeingEdited || isListItemBeingCreated"
           disableClose="true">
           <section>
             <form
               #formInstanceListManage="ngForm"
-              [formGroup]="formListManage"
+              [formGroup]="formListItemManage"
               (ngSubmit)="
                 onCreateEditListSubmit(formInstanceListManage, $event)
               ">
               <header>
                 <h2 class="h3">
-                  {{ isListBeingCreated ? 'Create' : 'Edit' }} List
+                  {{ isListItemBeingCreated ? 'Create' : 'Edit' }} List Item
                 </h2>
               </header>
 
@@ -60,19 +60,21 @@
                         formControlName="name"
                         class="full-width" />
                       @if (
-                        formListManage.controls['name'].hasError('required')
+                        formListItemManage.controls['name'].hasError('required')
                       ) {
                         <mat-error>List name is required.</mat-error>
                       }
                       @if (
-                        formListManage.controls['name'].hasError('maxlength')
+                        formListItemManage.controls['name'].hasError(
+                          'maxlength'
+                        )
                       ) {
                         <mat-error>
                           List name must have no more than 64 characters.
                         </mat-error>
                       }
                       @if (
-                        formListManage.controls['name'].hasError('pattern')
+                        formListItemManage.controls['name'].hasError('pattern')
                       ) {
                         <mat-error>
                           List name must not consist only of whitespace
@@ -90,7 +92,7 @@
                         rows="5">
                       </textarea>
                       @if (
-                        formListManage.controls['description'].hasError(
+                        formListItemManage.controls['description'].hasError(
                           'maxlength'
                         )
                       ) {
@@ -100,7 +102,7 @@
                         </mat-error>
                       }
                       @if (
-                        formListManage.controls['description'].hasError(
+                        formListItemManage.controls['description'].hasError(
                           'pattern'
                         )
                       ) {
@@ -108,6 +110,46 @@
                           List description must not consist only of whitespace
                           characters.
                         </mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                  <div>
+                    <mat-form-field
+                      class="full-width quantity-field-with-buttons">
+                      <input
+                        matInput
+                        type="number"
+                        placeholder="Quantity"
+                        formControlName="quantity"
+                        min="0"
+                        max="10000"
+                        class="full-width" />
+
+                      @if (
+                        formListItemManage.controls['quantity'].hasError(
+                          'required'
+                        )
+                      ) {
+                        <mat-error>Quantity is required.</mat-error>
+                      }
+                      @if (
+                        formListItemManage.controls['quantity'].hasError('min')
+                      ) {
+                        <mat-error>Quantity cannot be negative.</mat-error>
+                      }
+                      @if (
+                        formListItemManage.controls['quantity'].hasError('max')
+                      ) {
+                        <mat-error
+                          >Quantity cannot greater than 10000.</mat-error
+                        >
+                      }
+                      @if (
+                        formListItemManage.controls['quantity'].hasError(
+                          'pattern'
+                        )
+                      ) {
+                        <mat-error>Quantity must be a valid number.</mat-error>
                       }
                     </mat-form-field>
                   </div>
@@ -132,7 +174,7 @@
                     type="submit">
                     Save
                   </button>
-                  @if (isListBeingCreated) {
+                  @if (isListItemBeingCreated) {
                     <button
                       id="saveAndCreateAnother"
                       mat-raised-button
@@ -182,14 +224,23 @@
               <td mat-cell *matCellDef="let row">{{ row.name }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="public">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Public</th>
-              <td mat-cell *matCellDef="let row">{{ row.public | yesNo }}</td>
-            </ng-container>
-
             <ng-container matColumnDef="description">
               <th mat-header-cell *matHeaderCellDef>Description</th>
               <td mat-cell *matCellDef="let row">{{ row.description }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>Quantity</th>
+              <td mat-cell *matCellDef="let row">{{ row.quantity }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="suppressed">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Suppressed
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row.isSuppressed | yesNo }}
+              </td>
             </ng-container>
 
             <ng-container matColumnDef="created">
@@ -216,18 +267,18 @@
                   color="primary"
                   class="default-small-button action-button-left"
                   aria-label="Edit Row"
-                  (click)="onEditList(row)">
+                  (click)="onEditListItem(row)">
                   <i class="material-symbols-rounded">info</i>
                 </button>
                 <button
                   mat-button
-                  matTooltip="Toggle Shared"
+                  matTooltip="Toggle Suppression"
                   matTooltipPosition="below"
                   color="primary"
                   class="default-small-button"
-                  aria-label="Edit Row"
-                  (click)="onTogglePublicList(row)">
-                  <i class="material-symbols-rounded">lock</i>
+                  aria-label="Toggle Suppression"
+                  (click)="onToggleItemSuppression(row)">
+                  <i class="material-symbols-rounded">arrow_downward</i>
                 </button>
                 <button
                   mat-button
@@ -241,12 +292,12 @@
                 </button>
                 <button
                   mat-button
-                  matTooltip="Delete"
+                  matTooltip="Remove item from list"
                   matTooltipPosition="below"
                   color="primary"
                   class="default-small-button action-button-right"
-                  aria-label="Edit Row"
-                  (click)="onDeleteList(row)">
+                  aria-label="Remove item from list"
+                  (click)="onRemoveListItem(row)">
                   <i class="material-symbols-rounded">delete</i>
                 </button>
               </td>

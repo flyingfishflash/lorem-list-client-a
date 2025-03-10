@@ -238,10 +238,8 @@ export class ListsManageComponent implements OnDestroy {
     this.#submitPatchRequest(row.id, patchRequest);
   }
 
-  onManageListContent() {
-    this.#router.navigate([domainRoutes.listManage]);
-    // this.#rout
-    // load another routable component with this functionality
+  onManageListContent(row: LrmList) {
+    this.#router.navigate([domainRoutes.listManage + '/' + row.id]);
     this.#noOp();
   }
 
@@ -446,8 +444,8 @@ export class ListsManageComponent implements OnDestroy {
     }
     this.displayedColumns = [
       'name',
-      'public',
       'description',
+      'public',
       'created',
       'updated',
       'actions',
@@ -460,7 +458,7 @@ export class ListsManageComponent implements OnDestroy {
     } else {
       this.initalPaginatorPageSize = 3;
     }
-    this.displayedColumns = ['name', 'public', 'description', 'actions'];
+    this.displayedColumns = ['name', 'description', 'public', 'actions'];
   }
 
   #setPageSize(newSize: number) {

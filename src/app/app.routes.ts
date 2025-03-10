@@ -32,7 +32,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: domainRoutes.listManage,
+    path: domainRoutes.listManage + '/:listId',
     loadComponent: () =>
       import(
         './domain/routes/list-manage-content/list-manage-content.component'

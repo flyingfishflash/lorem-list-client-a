@@ -182,14 +182,14 @@
               <td mat-cell *matCellDef="let row">{{ row.name }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="public">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Public</th>
-              <td mat-cell *matCellDef="let row">{{ row.public | yesNo }}</td>
-            </ng-container>
-
             <ng-container matColumnDef="description">
               <th mat-header-cell *matHeaderCellDef>Description</th>
               <td mat-cell *matCellDef="let row">{{ row.description }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="public">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Public</th>
+              <td mat-cell *matCellDef="let row">{{ row.public | yesNo }}</td>
             </ng-container>
 
             <ng-container matColumnDef="created">
@@ -236,7 +236,7 @@
                   color="primary"
                   class="default-small-button"
                   aria-label="Add/Remove Items"
-                  (click)="onManageListContent()">
+                  (click)="onManageListContent(row)">
                   <i class="material-symbols-rounded">settings</i>
                 </button>
                 <button

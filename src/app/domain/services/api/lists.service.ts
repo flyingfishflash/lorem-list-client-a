@@ -85,7 +85,6 @@ export class ListsService {
 
   getListIncludeItems(listId: string): Observable<LrmList> {
     const httpParams = new HttpParams().set('includeItems', 'true');
-    listId = '498cfef6-db29-4635-be4f-b167fa75823c';
     return this.#http
       .get<any>(
         `${environment.api.server.url}${domainApiRoutes.lists}/${listId}`,

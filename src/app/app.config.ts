@@ -14,6 +14,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import {
   provideRouter,
+  withComponentInputBinding,
   withEnabledBlockingInitialNavigation,
 } from '@angular/router';
 import {
@@ -59,7 +60,11 @@ export const appConfig: ApplicationConfig = {
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     provideHttpClient(withInterceptors([authInterceptor(), errorInterceptor])),
     provideAuth(authConfig),
-    provideRouter(routes, withEnabledBlockingInitialNavigation()),
+    provideRouter(
+      routes,
+      withEnabledBlockingInitialNavigation(),
+      withComponentInputBinding(),
+    ),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideNoopAnimations(),
   ],

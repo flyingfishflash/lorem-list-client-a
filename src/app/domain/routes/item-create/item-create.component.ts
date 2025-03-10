@@ -16,7 +16,7 @@ import { DialogGeneralComponent } from '../../../core/shared/components/dialog-g
 import { Logger } from '../../../core/shared/logging/logger';
 import { MATCH_STRING_OF_WHITE_SPACE } from '../../../core/shared/regex-pattern-validations.contants';
 import { ItemCreateRequest } from '../../model/item-create-request';
-import { ItemsService } from '../../services/api/items.service';
+import { ListItemsService } from '../../services/api/list-items.service';
 
 @Component({
   selector: 'app-item-create',
@@ -34,7 +34,7 @@ import { ItemsService } from '../../services/api/items.service';
 export class ItemCreateComponent {
   readonly #dialog = inject(MatDialog);
   readonly #formBuilder = inject(NonNullableFormBuilder);
-  readonly #itemService = inject(ItemsService);
+  readonly #itemService = inject(ListItemsService);
   readonly #logger = new Logger('item-create.component');
   readonly #snackBar = inject(MatSnackBar);
 
@@ -67,9 +67,10 @@ export class ItemCreateComponent {
           this.createItemForm.getRawValue().description,
         ),
         quantity: this.createItemForm.getRawValue().quantity,
+        isSuppressed: false,
       };
 
-      this.#itemService.postItem(postData).subscribe({
+      this.#itemService.postItem('blah', postData).subscribe({
         next: (serviceResponse) => {
           this.#logger.debug(serviceResponse);
           const dialogRef = this.#dialog.open(DialogGeneralComponent, {
