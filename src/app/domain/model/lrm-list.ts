@@ -1,4 +1,4 @@
-import { LrmItem } from "./lrm-item";
+import { LrmItem } from './lrm-item';
 
 export interface LrmList {
   id: string;

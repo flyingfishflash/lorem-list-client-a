@@ -1,4 +1,4 @@
 export interface LrmListSuccinct {
-    id: string;
-    name: string;
+  id: string;
+  name: string;
 }
