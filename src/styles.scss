@@ -1,5 +1,7 @@
 @use '@angular/material' as mat;
 @use './style/theme/m3-theme.scss';
+@use 'material-symbols';
+
 // @use 'styles/theme/mixins/future-component.theme';
 
 @include mat.elevation-classes();
@@ -8,7 +10,6 @@
 // https://purecss.io/
 @import './style/pure-grids/grids.css';
 @import './style/pure-grids/grids-responsive.css';
-@import 'material-symbols';
 
 :root {
   @include mat.all-component-themes(m3-theme.$light-theme);
