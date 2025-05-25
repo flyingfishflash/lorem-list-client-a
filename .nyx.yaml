@@ -7,7 +7,7 @@ changelog:
   path: 'build/CHANGELOG.md'
   template: '.nyx-changelog.template'
   sections:
-    'Dependencies': '^dependency$'
+    'Dependencies': '(^dependency$|^dependencies$)'
     'Additions': '^feature$'
     'Changes': '(^refactor$|^perf$)'
     'Fixes': '^fix$'
@@ -24,7 +24,7 @@ commitMessageConventions:
       bumpExpressions:
         major: '(?s)(?m)^[a-zA-Z0-9_]+(!|.*^(BREAKING( |-)CHANGE: )).*'
         minor: '(?s)(?m)^feature(?!!|.*^(BREAKING( |-)CHANGE: )).*'
-        patch: '(?s)(?m)(^ci|^dependency|^fix|^perf|^refactor)(?!!|.*^(BREAKING( |-)CHANGE: )).*'
+        patch: '(?s)(?m)(^build|^ci|^dependency|^dependencies|^fix|^perf|^refactor)(?!!|.*^(BREAKING( |-)CHANGE: )).*'
 git:
   remotes:
     lan:
@@ -39,24 +39,24 @@ git:
       authenticationMethod: USER_PASSWORD
       user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}'
       password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITHUB{{/environmentVariable}}'
-    codeberg:
-      authenticationMethod: USER_PASSWORD
-      user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
-      password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
+    # codeberg:
+    #   authenticationMethod: USER_PASSWORD
+    #   user: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
+    #   password: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
 releaseTypes:
   enabled:
     - mainline
     - release
     - internal
   publicationServices:
-    - gitlab
-    - github
     - lan
+    - github
+    - gitlab
     # - codeberg
   remoteRepositories:
-    - gitlab
-    - github
     - lan
+    - github
+    - gitlab
     # - codeberg
   items:
     mainline:
@@ -68,7 +68,7 @@ releaseTypes:
       gitTag: 'false'
       matchBranches: '^main$'
       matchEnvironmentVariables:
-        CI: '^true$'
+        CI: '^(true|woodpecker)$'
       matchWorkspaceStatus: 'CLEAN'
       publish: 'false'
     release:
@@ -93,13 +93,6 @@ releaseTypes:
           qualifier: '{{#lower}}{{branch}}{{/lower}}'
           value: '{{#sanitize}}{{#environmentVariable}}DRONE_BUILD_NUMBER{{/environmentVariable}}{{/sanitize}}'
 services:
-  codeberg:
-    type: 'GITHUB'
-    options:
-      AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
-      BASE_URI: 'https://codeberg.org/api/v1'
-      REPOSITORY_NAME: 'lorem-list-client-a'
-      REPOSITORY_OWNER: 'lorem-list'
   lan:
     type: 'GITHUB'
     options:
@@ -119,3 +112,10 @@ services:
       AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_GITLAB{{/environmentVariable}}'
       REPOSITORY_NAME: 'lorem-list-client-a'
       REPOSITORY_OWNER: 'flyingfishflash'
+  # codeberg:
+  #   type: 'GITHUB'
+  #   options:
+  #     AUTHENTICATION_TOKEN: '{{#environmentVariable}}NYX_FLYINGFISHFLASH_TOKEN_CODEBERG{{/environmentVariable}}'
+  #     BASE_URI: 'https://codeberg.org/api/v1'
+  #     REPOSITORY_NAME: 'lorem-list-client-a'
+  #     REPOSITORY_OWNER: 'lorem-list'
