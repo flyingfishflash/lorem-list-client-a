@@ -1,3 +1,8 @@
+variables:
+  - &cache_volume '/home/container-runner/.local/share/docker/volumes-managed/woodpecker-ci-cache:/woodpecker/cache'
+  - &source_cached_version source /woodpecker/cache/$CI_REPO/.version
+  - &node 'harbor.flyingfishflash.net/docker.io/node:22-alpine'
+
 when:
   event:
     - manual
@@ -6,10 +11,6 @@ when:
 depends_on:
   - check-secrets
   - infer-and-cache-version
-
-variables:
-  - &cache_volume '/home/container-runner/.local/share/docker/volumes-managed/woodpecker-ci-cache:/woodpecker/cache'
-  - &source_cached_version source /woodpecker/cache/$CI_REPO/.version
 
 clone:
   git:
@@ -20,7 +21,7 @@ clone:
 
 steps:
   - name: build
-    image: harbor.flyingfishflash.net/docker.io/node:22-alpine
+    image: *node
     commands:
       - *source_cached_version
       - |

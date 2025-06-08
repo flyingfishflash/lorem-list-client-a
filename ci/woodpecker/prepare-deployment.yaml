@@ -1,3 +1,9 @@
+variables:
+  - &cache_volume '/home/container-runner/.local/share/docker/volumes-managed/woodpecker-ci-cache:/woodpecker/cache'
+  - &export_cache_volume_deploy 'export CACHE_DEPLOY=/woodpecker/cache/$CI_REPO/deploy'
+  - &source_cached_version 'source /woodpecker/cache/$CI_REPO/.version'
+  - &alpine 'harbor.flyingfishflash.net/docker.io/alpine:latest'
+
 when:
   event:
     - manual
@@ -8,11 +14,6 @@ when:
 depends_on:
   - publish-image
 
-variables:
-  - &cache_volume '/home/container-runner/.local/share/docker/volumes-managed/woodpecker-ci-cache:/woodpecker/cache'
-  - &export_cache_volume_deploy 'export CACHE_DEPLOY=/woodpecker/cache/$CI_REPO/deploy'
-  - &source_cached_version 'source /woodpecker/cache/$CI_REPO/.version'
-
 clone:
   git:
     image: woodpeckerci/plugin-git
@@ -22,7 +23,7 @@ clone:
 
 steps:
   - name: create inventory file
-    image: harbor.flyingfishflash.net/docker.io/alpine
+    image: *alpine
     environment:
       DEPLOY_TO_HOST:
         from_secret: deploy_to_host
@@ -35,7 +36,7 @@ steps:
       - *cache_volume
 
   - name: create variables file
-    image: harbor.flyingfishflash.net/docker.io/alpine
+    image: *alpine
     environment:
       DEPLOY_TO_HOST:
         from_secret: deploy_to_host
@@ -70,7 +71,7 @@ steps:
       - *cache_volume
 
   - name: append oidc client id to variables file [dev]
-    image: harbor.flyingfishflash.net/docker.io/alpine
+    image: *alpine
     environment:
       OIDC_CLIENT_ID:
         from_secret: oidc_client_id_dev
@@ -86,7 +87,7 @@ steps:
         exclude: release
 
   - name: append oidc client id to variables file [prd]
-    image: harbor.flyingfishflash.net/docker.io/alpine
+    image: *alpine
     environment:
       OIDC_CLIENT_ID:
         from_secret: oidc_client_id_prd

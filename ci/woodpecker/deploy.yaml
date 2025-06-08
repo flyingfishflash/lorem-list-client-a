@@ -1,3 +1,8 @@
+variables:
+  - &cache_volume '/home/container-runner/.local/share/docker/volumes-managed/woodpecker-ci-cache:/woodpecker/cache'
+  - &export_cache_volume_deploy 'export CACHE_DEPLOY=/woodpecker/cache/$CI_REPO/deploy'
+  - &alpine 'harbor.flyingfishflash.net/docker.io/alpine:latest'
+
 when:
   event:
     - manual
@@ -8,10 +13,6 @@ when:
 depends_on:
   - prepare-deployment
 
-variables:
-  - &cache_volume '/home/container-runner/.local/share/docker/volumes-managed/woodpecker-ci-cache:/woodpecker/cache'
-  - &export_cache_volume_deploy 'export CACHE_DEPLOY=/woodpecker/cache/$CI_REPO/deploy'
-
 clone:
   git:
     image: woodpeckerci/plugin-git
@@ -21,7 +22,7 @@ clone:
 
 steps:
   - name: restore playbook files from cache
-    image: harbor.flyingfishflash.net/docker.io/alpine:latest
+    image: *alpine
     commands:
       - *export_cache_volume_deploy
       - cp -v $CACHE_DEPLOY/variables.yaml ci/scripts/deploy/
