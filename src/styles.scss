@@ -25,13 +25,13 @@ body {
   height: 100%;
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-  --mdc-filled-button-container-shape: var(--mat-sys-corner-extra-small);
-  --mdc-outlined-button-container-shape: var(--mat-sys-corner-extra-small);
-  --mdc-protected-button-container-shape: var(--mat-sys-corner-extra-small);
-  --mdc-text-button-container-shape: var(--mat-sys-corner-extra-small);
+  --mat-button-filled-container-shape: var(--mat-sys-corner-extra-small);
+  --mat-button-outlined-container-shape: var(--mat-sys-corner-extra-small);
+  --mat-button-protected-container-shape: var(--mat-sys-corner-extra-small);
+  --mat-button-text-container-shape: var(--mat-sys-corner-extra-small);
   --mat-list-active-indicator-shape: var(--mat-sys-corner-extra-small);
   --mat-sidenav-container-shape: var(--mat-sys-corner-none);
-  --mdc-dialog-container-shape: var(--mat-sys-corner-extra-small);
+  --mat-dialog-container-shape: var(--mat-sys-corner-extra-small);
   // --mat-app-background-color: #FAFAF9;
 }
 

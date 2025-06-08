@@ -16,9 +16,13 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "lib": ["ES2023", "dom", "dom.iterable"],
+    "lib": [
+      "ES2023",
+      "dom",
+      "dom.iterable"
+    ],
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
@@ -29,18 +33,15 @@
     "outDir": "./dist/out-tsc",
     "skipLibCheck": true,
     "strict": true,
-    // ---
     "alwaysStrict": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    // For awareness on exactOptionalPropertyTypes: https://github.com/angular/components/issues/24078
     "exactOptionalPropertyTypes": true,
     "strictPropertyInitialization": true,
     "useUnknownInCatchVariables": true,
-    // --
     "sourceMap": true,
     "target": "ES2023"
   }
