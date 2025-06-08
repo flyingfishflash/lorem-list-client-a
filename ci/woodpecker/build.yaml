@@ -20,7 +20,7 @@ clone:
 
 steps:
   - name: build
-    image: registry.flyingfishflash.net/docker.io/node:22-alpine
+    image: harbor.flyingfishflash.net/docker.io/node:22-alpine
     commands:
       - *source_cached_version
       - |

@@ -22,7 +22,7 @@ clone:
 
 steps:
   - name: create inventory file
-    image: registry.flyingfishflash.net/docker.io/alpine
+    image: harbor.flyingfishflash.net/docker.io/alpine
     environment:
       DEPLOY_TO_HOST:
         from_secret: deploy_to_host
@@ -35,7 +35,7 @@ steps:
       - *cache_volume
 
   - name: create variables file
-    image: registry.flyingfishflash.net/docker.io/alpine
+    image: harbor.flyingfishflash.net/docker.io/alpine
     environment:
       DEPLOY_TO_HOST:
         from_secret: deploy_to_host
@@ -70,7 +70,7 @@ steps:
       - *cache_volume
 
   - name: append oidc client id to variables file [dev]
-    image: registry.flyingfishflash.net/docker.io/alpine
+    image: harbor.flyingfishflash.net/docker.io/alpine
     environment:
       OIDC_CLIENT_ID:
         from_secret: oidc_client_id_dev
@@ -86,7 +86,7 @@ steps:
         exclude: release
 
   - name: append oidc client id to variables file [prd]
-    image: registry.flyingfishflash.net/docker.io/alpine
+    image: harbor.flyingfishflash.net/docker.io/alpine
     environment:
       OIDC_CLIENT_ID:
         from_secret: oidc_client_id_prd

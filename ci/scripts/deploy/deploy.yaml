@@ -139,7 +139,7 @@
 
     - name: Pull image lorem-list-client-a:{{ tag }}
       containers.podman.podman_image:
-        name: registry.flyingfishflash.net/lorem-list/lorem-list-client-a
+        name: harbor.flyingfishflash.net/lorem-list/lorem-list-client-a
         force: true
         tag: '{{ tag }}'
 

@@ -21,7 +21,7 @@ clone:
 
 steps:
   - name: restore playbook files from cache
-    image: registry.flyingfishflash.net/docker.io/alpine:latest
+    image: harbor.flyingfishflash.net/docker.io/alpine:latest
     commands:
       - *export_cache_volume_deploy
       - cp -v $CACHE_DEPLOY/variables.yaml ci/scripts/deploy/

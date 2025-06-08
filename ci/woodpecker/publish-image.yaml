@@ -21,7 +21,7 @@ clone:
 
 steps:
   - name: generate image tags
-    image: registry.flyingfishflash.net/docker.io/alpine
+    image: harbor.flyingfishflash.net/docker.io/alpine
     commands:
       - *source_cached_version
       - echo -n $NYX_CURRENT_VERSION > .tags
